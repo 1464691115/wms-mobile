@@ -1,0 +1,84 @@
+.tran-center {
+    margin-top: 50%;
+    margin-left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.flex-center-a {
+    display: flex;
+    align-items: center;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-center-j {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-w-w {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.flex-d-c {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-d-r {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-c-s {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wh {
+    width: 100%;
+    height: 100%;
+}
+
+.safe-bottom {
+    width: 100%;
+    height: $safeBottom;
+}
+
+
+.footer {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background: #fff;
+    z-index: 3;
+
+
+    .btn-list {
+        height: 134rpx;
+        width: 100%;
+        overflow: hidden;
+
+        &>.btn:first-child {
+            background-color: rgba($primary, .1);
+            color: $primary;
+        }
+
+        &>.btn:last-child {
+            background-color: $primary;
+            color: #fff;
+        }
+
+        &>.btn {
+            @include flex-center;
+            font-size: 36rpx;
+            flex: 1;
+        }
+    }
+}

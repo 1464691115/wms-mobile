@@ -1,0 +1,47 @@
+{
+    "compilerOptions": {
+        "target": "esnext",
+        "useDefineForClassFields": true,
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "strict": true,
+        "jsx": "preserve",
+        "sourceMap": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "allowJs": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitReturns": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "noUnusedLocals": true,
+        "skipLibCheck": true,
+        "experimentalDecorators": true,
+        "lib": ["esnext", "dom"],
+        "baseUrl": "./",
+        "paths": {
+            "@/*": ["src/*"],
+            "@config/*": ["config/*"],
+            "typings/*": ["typings/*"],
+        },
+        "types": [
+            "@types/node",
+            "mini-types",
+            "@dcloudio/types",
+            "miniprogram-api-typings",
+            "unplugin-vue-define-options"
+        ],
+    },
+    "exclude": ["./src/uni_modules/**/*", "build", "dist", "scripts", "jest"],
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.vue",
+        "src/**/*.d.ts",
+        "config/**/*.ts",
+        "@dcloudio/types",
+        "typings/**/*",
+        "./node_modules/sview-ui/typings/components.d.ts",
+        "./*.ts",
+    ]
+}

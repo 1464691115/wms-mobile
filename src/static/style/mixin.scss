@@ -1,0 +1,238 @@
+// 苹果底部安全区域
+$safeBottom: constant(safe-area-inset-bottom);
+$safeBottom: env(safe-area-inset-bottom);
+
+// 页面高度（tabbar 页）
+$pageHeightTab: calc(100vh - var(--window-top) - var(--window-bottom) - $tabbar-height - $safeBottom);
+// 页面高度（无tabbar 页）
+$pageHeight: calc(100vh - var(--window-top) - var(--window-bottom) - $safeBottom);
+
+
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+@mixin flex-center-a {
+    display: flex;
+    align-items: center;
+}
+
+@mixin flex-center-j {
+    display: flex;
+    justify-content: center;
+}
+
+
+@mixin flex-w-w {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+
+@mixin flex-d-c {
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+@mixin flex-d-r {
+    display: flex;
+    flex-direction: row;
+}
+
+
+
+@mixin flex-c-s {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+@mixin box($margin: 0, $padding: 0, $width: 100%, $height: 100%) {
+    margin: $margin;
+    padding: $padding;
+    width: $width;
+    height: $height;
+}
+
+
+@mixin wh($w: 100%, $h: 100%) {
+    position: relative;
+    width: $w;
+    height: $h;
+}
+
+@mixin whSquare($n: 100%) {
+    width: $n;
+    height: $n;
+}
+
+@mixin border($border: none, $borderRadius: 0) {
+    border: $border;
+    border-radius: $borderRadius;
+}
+
+@mixin transition($second: 300ms) {
+    transition: all $second ease-in-out;
+}
+
+@mixin click {
+    cursor: pointer;
+    user-select: none;
+}
+
+@mixin fontSize($size) {
+    font-size: $size;
+    line-height: $size;
+}
+
+@mixin font($size: 16px, $lineHeight: 16px, $color: #000, $weight: 400) {
+    color: $color;
+    font-weight: $weight;
+    font-size: $size;
+    line-height: $lineHeight;
+}
+
+//* 单行省略
+@mixin textEllipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 2行省略  */
+@mixin twoEllipsis {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+/* 3行省略  */
+@mixin textsEllipsis {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+@mixin pageWrap ($statusH: 0px) {
+    $height: calc(100vh - var(--window-top) - var(--window-bottom) - $safeBottom - $statusH);
+    width: 100%;
+    min-height: $height;
+    max-height: $height;
+    position: relative;
+    background-color: $bgColor;
+    overflow: hidden;
+}
+
+@mixin tabBarPageWrap {
+    // padding-bottom: calc($tabbar-height - var(--status-bar-height));
+    width: 100vw;
+    height: $pageHeightTab;
+    position: relative;
+}
+
+@mixin iPhoneBottom($bottom: 0px) {
+    padding-bottom: calc(constant(safe-area-inset-bottom) + #{$bottom}) !important;
+    padding-bottom: calc(env(safe-area-inset-bottom) + #{$bottom}) !important;
+}
+
+
+@mixin square($size) {
+    width: $size;
+    height: $size;
+}
+
+@mixin orderFooter {
+    @include flex-center-a;
+    @include iPhoneBottom(15rpx);
+    padding-top: 15rpx;
+    justify-content: space-between;
+    box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.06);
+    background-color: #fff;
+    z-index: 20;
+
+    .price {
+        @include flex-center-a;
+        margin-left: 30rpx;
+        flex: 1;
+
+        .label {
+            @include font(28rpx, 42rpx, #7d7d7d, 400);
+        }
+    }
+
+    .submit {
+        @include box(0, 0, 240rpx, 90rpx);
+        @include border(none, 10rpx);
+        @include flex-center;
+        @include font(28rpx, 36rpx, #fff, 400);
+        background-color: $base-color;
+    }
+}
+
+@mixin button($width, $height, $color, $fontSize, $fontColor) {
+    @include flex-center;
+    @include box(0, 10rpx, auto, $height);
+    @include font($fontSize, $fontSize, $fontColor, 400);
+    @include border(1px solid $color, $height);
+    min-width: $width;
+    background-color: $color;
+}
+
+
+@mixin messageRed($size: 12rpx) {
+    position: relative;
+
+    &::after {
+        content: '';
+        @include whSquare($size);
+        @include border(none, 51%);
+        position: absolute;
+        top: calc($size / -2);
+        right: calc($size / -2);
+        background-color: #FE0000;
+    }
+}
+
+@mixin absoluteAlgin($size) {
+    top: calc(50% - $size / 2);
+}
+
+@mixin absoluteJustify($size) {
+    left: calc(50% - $size / 2);
+}
+
+
+@mixin houseGrid($colum:3, $wrapPad: 24rpx, $gap: 10rpx) {
+    //TODO kesen: 2022-04-27  $wrapPad 块内边距 *2是为了减左右 注如果外层还有边距存在也需算上，然后 自定义想要的内边距覆盖
+    //TODO kesen: 2022-04-27  $gap 项间距 ($column - 1) * 2 是计算其中存在间距总数 就比如 3个项存在4个间距
+    //TODO kesen: 2022-04-27  $w 根据视图计算大小
+    $w: calc((100vw - $wrapPad * 2 - $gap * ($colum - 1) * 2) / $colum);
+    margin: -$gap;
+    padding: $wrapPad;
+
+
+    @include flex-w-w;
+
+    ::v-deep .item {
+        width: $w !important;
+        height: $w !important;
+        margin: $gap;
+    }
+}
+
+
+@mixin absoluteCenter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

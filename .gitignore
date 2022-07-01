@@ -1,0 +1,29 @@
+.DS_Store
+node_modules/
+unpackage/
+dist/
+docker/app
+./*.env
+
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+
+# Editor directories and files
+.project
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+
+# 自动生成
+src/static/style/theme.scss
+pages.json

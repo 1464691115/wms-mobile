@@ -1,0 +1,104 @@
+{
+    // Place your patient-admin 工作区 snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+    // description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+    // is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+    // used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+    // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+    // Placeholders with the same ids are connected.
+    // Example:
+    // "Print to console": {
+    // 	"scope": "javascript,typescript",
+    // 	"prefix": "log",
+    // 	"body": [
+    // 		"console.log('$1');",
+    // 		"$2"
+    // 	],
+    // 	"description": "Log output to console"
+    // }
+    "loadView使用示例": {
+        "scope": "vue",
+        "prefix": "loadViewVue",
+        "body": [
+            "<template>",
+            "\t<LoadView ref='loadViewRef'>",
+            "\t\t<view class='$1-page'>",
+            "\t\t\t$4",
+            "\t\t</view>",
+            "\t</LoadView>",
+            "</template>",
+            "<script lang='ts' setup>",
+            "import { onMounted, ref } from 'vue';",
+            "import LoadView from '@/layout/LoadView.vue';",
+            "import { ApiErrorMsg } from '@/api/instanceof';\n",
+
+            "const loadViewRef = ref<InstanceType<typeof LoadView>>();\n",
+            "onMounted(async () => {",
+            "\ttry {",
+            "\t\t$2",
+            "\t\tloadViewRef.value?.complete();",
+            "\t} catch (error) {",
+            "\t\tif (error instanceof ApiErrorMsg) loadViewRef.value?.fail(error.msg);",
+            "\t\telse loadViewRef.value?.complete();",
+            "\t}",
+            "});",
+            "</script>",
+            "<style lang='scss' scoped>",
+            ".$1-page {",
+            "\t$3",
+            "}",
+            "</style>"
+        ]
+    },
+    "vue3 组件模板": {
+        "scope": "javascript,typescript,vue,tsx",
+        "prefix": "component3",
+        "body": [
+            "<template>",
+            "<view class='$1'>",
+            "$2",
+            "</view>",
+            "</template>",
+            "<script lang='ts' name='$1' setup>",
+            "interface Props {",
+            "\t$3",
+            "}",
+            "defineProps<Props>()",
+            "</script>",
+            "<style lang='scss' scoped>",
+            ".$1{",
+            "}",
+            "</style>"
+        ],
+        "description": "vue文件的默认模板"
+    },
+    "接口 try catch loadView 模板": {
+        "scope": "javascript,typescript,vue,tsx",
+        "prefix": "apiTryLoadView",
+        "body": [
+            "try {",
+            "\t$1",
+            "} catch (error) {",
+            "\tif (error instanceof ApiErrorMsg) loadViewRef.value?.fail(error.msg);",
+            "\telse loadViewRef.value?.complete();",
+            "}",
+        ],
+        "description": "vue文件的默认模板"
+    },
+    "接口 try catch loading 模板": {
+        "scope": "javascript,typescript,vue,tsx",
+        "prefix": "apiTryLoading",
+        "body": [
+            "const loading = useLoading()",
+            "try {",
+            "\t$1",
+            "\tloading()",
+            "} catch (error) {",
+            "\tif (error instanceof ApiErrorMsg) await showToast(error.msg);",
+            "\tconsole.log(error)",
+            "\tloading()",
+            "}",
+        ],
+        "description": "vue文件的默认模板"
+    },
+
+}

@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-typescript-next",
+    "wayou.vscode-todo-highlight",
+    "Vue.volar"
+  ]
+}
