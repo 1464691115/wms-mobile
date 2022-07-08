@@ -36,7 +36,7 @@ function createPage(name) {
     const _routes = './src/routes/index.ts'
     const _to_fun = './src/utils/global/toPage.ts'
 
-    const upName = name.replace(/\w?/, (str) => str.toUpperCase())
+    const upName = name.replace(/(\w?)|\-(\w)/, (_, $1) => $1.toUpperCase())
 
 
     const exitsCom = fs.existsSync(`${_path}/${name}`)
@@ -86,14 +86,16 @@ function createPage(name) {
 
         const routesPath = path.resolve(_routes)
         const routesFile = fs.readFileSync(routesPath, 'utf8')
-        const routesTem = routesFile.replace(/(routesUrl \= .*)/g, (res) => `${res}\n\t${productName ? `/** ${productName} */` : ''}\n${name}: '/pages/${name}/index',`).replace(/(\] as routesType)/g, (res) => `\t{\n\t\tpath: routesUrl.${name}${isDefinedNavigation ? `,\n\t\tstyle: navigationBlock('${productName}')` : ''}\n\t},\n${res}`)
+
+        const reulstName = name.replace(/\-(\w)/, (_, $1) => $1.toUpperCase())
+        const routesTem = routesFile.replace(/(routesUrl \= .*)/g, (res) => `${res}\n\t${productName ? `/** ${productName} */` : ''}\n${reulstName}: '/pages/${name}/index',`).replace(/(\] as routesType)/g, (res) => `\t{\n\t\tpath: routesUrl.${reulstName}${isDefinedNavigation ? `,\n\t\tstyle: navigationBlock('${productName}')` : ''}\n\t},\n${res}`)
 
         fs.writeFileSync(routesPath, routesTem, 'utf8')
 
         if (isToFun) {
             const toFnPath = path.resolve(_to_fun)
             const toFnFile = fs.readFileSync(toFnPath, 'utf8')
-            const toFnTem = toFnFile + `\n\n${productName ? `/** 跳转到${productName} */` : ''}\nexport function to${upName}(){\n\tuni.navigateTo({\n\t\turl: routesUrl.${name}\n\t})\n}`
+            const toFnTem = toFnFile + `\n\n${productName ? `/** 跳转到${productName} */` : ''}\nexport function to${upName}(){\n\tuni.navigateTo({\n\t\turl: routesUrl.${reulstName}\n\t})\n}`
 
             fs.writeFileSync(toFnPath, toFnTem, 'utf8')
         }
