@@ -16,7 +16,7 @@ onShow(async () => {
   } finally {
     // 跳转到路由权重第二个的页面
     setTimeout(() => {
-      routes.length > 2 && uni.reLaunch({ url: `/${routes[1].path}` });
+      routes.length > 1 && uni.reLaunch({ url: `/${routes[1].path}` });
     }, 200);
   }
 });
