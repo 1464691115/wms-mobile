@@ -7,34 +7,31 @@ const path = require('path');
 const params = process.argv.slice(2)
 //TODO kesen: 2022-04-22  打开微信开发工具
 if (process.env.Path && params[0] !== 'off') {
-    process.env.Path.replace(/\;([A-Z]|[a-z]):\\微信web开发者工具/g, function (e) {
-        e = e.split(';')[1]
-        const weixin = '/d' + e
-        console.log(e);
-        const { exec } = require('child_process')
+    let e = ''
+    process.env.Path.split(';').every(el => el.includes('微信web开发者工具') ? (e = el) : true)
+
+    e = e.replace(/(([A-Z]|[a-z])\:.*微信web开发者工具).*/g, "$1")
+    const weixin = '/d' + e
+    const { exec } = require('child_process')
 
 
-        startWxIDE()
-        let time
+    startWxIDE()
+    let time
 
-        function startWxIDE() {
-            exec(`cd ${weixin} && cli open --project ${path.resolve(__dirname, '../dist/dev/mp-weixin')}`, (err, stdout, stderr) => {
+    function startWxIDE() {
+        exec(`cd ${weixin} && cli open --project ${path.resolve(__dirname, '../dist/dev/mp-weixin')}`, (err, stdout, stderr) => {
 
-                if (err) {
-                    console.log('启动失败，正在重新启动...', e);
-                    console.error(err);
-                    time = setTimeout(startWxIDE, 10000);
+            if (err) {
+                console.log('启动失败，正在重新启动...', e);
+                console.error(err);
+                time = setTimeout(startWxIDE, 10000);
 
-                    return;
-                }
-                console.log(`微信开发者工具启动成功!`, e);
-                clearInterval(time)
-            })
-        }
-
-        return e
-
-    })
+                return;
+            }
+            console.log(`微信开发者工具启动成功!`, e);
+            clearInterval(time)
+        })
+    }
 }
 
 
