@@ -1,8 +1,8 @@
 /** 页面加载的状态 */
 export enum PAGE_LOAD_STATUS {
-  success = 'success',
-  fail = 'fail',
-  loading = 'loading'
+  SUCCESS = 'success',
+  FAIL = 'fail',
+  LOADING = 'loading'
 }
 
 /** 图标 */
