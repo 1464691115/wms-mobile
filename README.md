@@ -18,6 +18,15 @@ npm install -g ts-node
 yarn start
 ```
 
+### H5启动
+
+```
+// package.json 的 start和start:w 命令为 
+//  "start": "yarn file off && yarn run dev:h5"
+//  "start:w": "start yarn file off --watch && yarn run dev:h5"
+yarn start
+```
+
 #### 或者 运行 根目录下 bin/dev.bat 文件（双击即可）推荐在 ide 中 通过终端执行命令
 
 ### 打包（看 package.json 命令）

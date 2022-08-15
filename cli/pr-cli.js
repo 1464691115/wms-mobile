@@ -34,7 +34,6 @@ if (process.env.Path && params[0] !== 'off') {
     }
 }
 
-
 const args = require('minimist')(process.argv.slice(2))
 
 const opt = {
@@ -48,7 +47,7 @@ writeThemeScss()
 
 if (args.watch) {
     fs.watch(watchFile, opt, debounce(writeFile(watchFile), 1000));
-    fs.watch('webpack/writeFill', opt, debounce(writeFile('webpack/writeFill'), 1000));
+    fs.watch('cli/writeFill', opt, debounce(writeFile('cli/writeFill'), 1000));
 }
 
 function writeFile(filesName = '') {

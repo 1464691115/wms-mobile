@@ -20,9 +20,13 @@
 
 //? 设计稿的样式拷贝
 
-//? 字体 
+//? 字体 蓝湖
 //TODO 查找 \s+height:\s?(\d*|#\d).*\n\s+font-size:\s?(\d*|#\d).*?\n.*\s+font-weight:\s?(\d*|\d).*?\n.*\s+color:\s?(#\w+|\w+|rgba/(.*/)).*
 //TODO 替换 \n\t\t\t@include font($2rpx, $1rpx, $3, $4);\n
+
+//? 字体 figam
+//TODO 查找 \s+height:\s?(\d*|#\d).*\n\s+font-weight:\s?(\d*|#\d).*?\n.*\s+font-size:\s?(\d*|\d).*?\n.*\s+color:\s?(#\w+|\w+|rgba/(.*/)).*
+//TODO 替换 \n\t\t\t@include font($3rpx, $1rpx, $4, $2);\n
 
 
 

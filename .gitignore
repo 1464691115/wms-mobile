@@ -27,3 +27,5 @@ yarn.lock
 # 自动生成
 src/static/style/theme.scss
 pages.json
+
+src/
