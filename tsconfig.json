@@ -29,20 +29,20 @@
             "@types/node",
             "mini-types",
             "@dcloudio/types",
-            "sview-ui",
             "miniprogram-api-typings",
+            "sview-ui",
             "unplugin-vue-define-options"
         ],
     },
-    "exclude": ["./src/uni_modules/**/*", "build", "dist", "scripts", "jest"],
+    "exclude": ["src/uni_modules", "build", "dist", "scripts", "jest"],
     "include": [
         "src/**/*.ts",
         "src/**/*.vue",
         "src/**/*.d.ts",
+        "cli/**/*.ts",
         "config/**/*.ts",
         "@dcloudio/types",
         "typings/**/*",
-        "./node_modules/sview-ui/typings/components.d.ts",
         "./*.ts",
     ]
 }

@@ -94,5 +94,4 @@ import debounce from '../lib/debounce'
 import throttle from '../lib/throttle'
 
 export * from './toPage'
-export * from 'sview-ui'
 export { debounce, throttle }
