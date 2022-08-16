@@ -29,6 +29,7 @@
             "@types/node",
             "mini-types",
             "@dcloudio/types",
+            "sview-ui",
             "miniprogram-api-typings",
             "unplugin-vue-define-options"
         ],
