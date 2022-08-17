@@ -1,8 +1,5 @@
-import { ComponentCustomProperties, ComputedOptions, State } from 'vue'
-import { Store } from 'vuex'
-import user from '@/store/modules/user';
-import doctor from '@/store/modules/doctor';
-import store from '@/store';
+import store from '@/store'
+import { InjectionKey } from 'vue'
 
 declare module '@vue/runtime-core' {
     // 声明自己的 store state
@@ -15,36 +12,36 @@ declare module '@vue/runtime-core' {
 }
 
 declare module 'vuex' {
-
-    export * from 'vuex/types'
-
-    //TODO kesen: 2022-05-21  模块化 dispatch 和 commit
+    //TODO kesen: 2022-05-21  模块化 dispatch、commit、getters
     type _StoreOptions<S, M extends ModuleTree<S>> = StoreOptions<S> & { modules: M }
 
-    type _Store<S, M extends ModuleTree<S>> = Omit<Store<S>, 'dispatch' | 'commit'> & {
-        state: { [KM in keyof M]: M[KM]['state'] }
-        test: DispatchParmType<M>
-        dispatch<K extends keyof T, T = DispatchParmType<M>>(type: K, payload?: Parameters<T[K]>[1]): ReturnType<T[K]>
-        commit<K extends keyof T, T = CommitParmType<M>>(type: K, payload: Parameters<T[K]>[1]): ReturnType<T[K]>
+    /** 要重构的 方法 */
+    type ReconstitutionFnKey = 'dispatch' | 'commit' | 'getters'
+    /** 要重构的 属性 */
+    type ReconstitutionStKey = 'dispathAct' | 'mutations' | 'getters' | 'state'
+
+    type _Store<S, M extends ModuleTree<S>> = Omit<Store<S>, ReconstitutionFnKey> & {
+        state: GetStoreValue<M, 'state'>
+         /** 如遇到type没有提示的情况下，请检查 modules里是否有 空对象的 属性，如有请删除 */
+        dispatch<K extends keyof T, T = GetParmType<M, 'dispathAct'>>(type: K, payload?: Parameters<T[K]>[1]): any
+         /** 如遇到type没有提示的情况下，请检查 modules里是否有 空对象的 属性，如有请删除 */
+        commit<K extends keyof T, T = GetParmType<M, 'mutations'>>(type: K, payload: Parameters<T[K]>[1]): ReturnType<T[K]>
+         /** 如遇到type没有提示的情况下，请检查 modules里是否有 空对象的 属性，如有请删除 */
+        getters: {
+            [K in keyof GetParmType<M, 'getters'>]: ReturnType<GetParmType<M, 'getters'>[K]>
+        }
     }
 
+    type GetStoreValue<S, K extends ReconstitutionStKey> = { [KS in keyof S]: S[KS][K] }
 
-    type DispatchParmType<T extends ModuleTree<S>> = valueOfU<{
+
+    type GetParmType<T, V extends ReconstitutionStKey> = valueOfU<{
         [K in keyof T]: valueOfU<{
-            [P in keyof T[K]['actions']]: {
-                [C in P as `${K}/${P}`]: T[K]['actions'][C]
+            [P in keyof Exclude<T[K][V], undefined>]: {
+                [C in P as `${K}/${P}`]: Exclude<T[K][V], undefined>[C]
             }
         }>
     }>
-
-    type CommitParmType<T extends ModuleTree<S>> = valueOfU<{
-        [K in keyof T]: valueOfU<{
-            [P in keyof T[K]['mutations']]: {
-                [C in P as `${K}/${P}`]: T[K]['mutations'][C]
-            }
-        }>
-    }>
-
 
     export function createStore<S, M extends ModuleTree<S>>(options: _StoreOptions<S, M>): _Store<S, M>;
 

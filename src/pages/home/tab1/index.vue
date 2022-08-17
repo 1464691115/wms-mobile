@@ -2,12 +2,13 @@
   <view class="wh">1 </view>
 </template>
 <script lang="ts" setup>
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import { ApiErrorMsg } from "@/api/instanceof";
 import LoadView from "@/layout/LoadView.vue";
+import { useCreateRef } from "@/hooks/components";
 
 /** 组件refs */
-const loadViewRef = ref<InstanceType<typeof LoadView>>();
+const loadViewRef = useCreateRef(LoadView);
 
 onMounted(async () => {
   try {

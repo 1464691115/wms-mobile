@@ -20,7 +20,6 @@
     ],
     "path-intellisense.mappings": {
         "@": "${workspaceRoot}/src/",
-        "sview-ui": "${workspaceRoot}/src/components/sview-ui/",
         "@config": "${workspaceRoot}/config/",
         "pages": "${workspaceRoot}/src/pages/",
         "/pages": "${workspaceRoot}/src/pages/",

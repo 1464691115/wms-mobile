@@ -49,11 +49,11 @@
         "@dcloudio/uni-mp-weixin": "3.0.0-alpha-3040820220424001",
         "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-3040820220424001",
         "@dcloudio/uni-ui": "^1.4.16",
-        "vue": "^3.2.37",
         "sass": "^1.51.0",
-        "sview-ui": "^0.0.5",
+        "sview-ui": "^0.0.6",
         "vite-plugin-style-import": "1.4.1",
         "vite-plugin-vue-setup-extend": "^0.4.0",
+        "vue": "^3.2.37",
         "vue-i18n": "^9.1.9",
         "vuex": "^4.0.2"
     },
@@ -62,7 +62,6 @@
         "@dcloudio/uni-automator": "3.0.0-alpha-3040820220424001",
         "@dcloudio/uni-cli-shared": "3.0.0-alpha-3040820220424001",
         "@dcloudio/vite-plugin-uni": "3.0.0-alpha-3040820220424001",
-        "typescript": "^4.7.3",
         "@types/node": "^17.0.33",
         "echarts": "^5.3.2",
         "inquirer": "^8.2.4",
@@ -70,6 +69,7 @@
         "miniprogram-api-typings": "*",
         "ora": "^6.1.0",
         "tsconfig-paths": "^4.0.0",
+        "typescript": "^4.7.3",
         "unplugin-vue-define-options": "^0.6.1",
         "vite": "^2.9.6"
     }

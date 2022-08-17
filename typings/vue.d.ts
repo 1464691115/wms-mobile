@@ -9,4 +9,11 @@ declare module '@vue/runtime-core' {
 
     export interface ComponentCustomProperties extends globalUtilsType, globalEnumType {
     }
+
+    export type ComponentPublicInstanceConstructor<T extends ComponentPublicInstance<Props, RawBindings, D, C, M> = ComponentPublicInstance<any>, Props = any, RawBindings = any, D = any, C extends ComputedOptions = ComputedOptions, M extends MethodOptions = MethodOptions> = {
+        __isFragment?: never;
+        __isTeleport?: never;
+        __isSuspense?: never;
+        new(...args: any[]): T;
+    };
 }

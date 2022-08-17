@@ -34,18 +34,16 @@ onLaunch(async function () {
 @import "~@/static/style/class.scss";
 @import "~@/static/style/style.scss";
 
-
 @font-face {
-  font-family: 'iconfont';  /* Project id 3398330 */
-  src: url('./static/font/iconfont.woff2') format('woff2'),
-       url('./static/font/iconfont.woff') format('woff'),
-       url('./static/font/iconfont.ttf') format('truetype');
+  font-family: "iconfont"; /* Project id 3398330 */
+  src: url("./static/font/iconfont.woff2") format("woff2"),
+    url("./static/font/iconfont.woff") format("woff"),
+    url("./static/font/iconfont.ttf") format("truetype");
 }
 
 .font-icon {
   font-family: "iconfont";
 }
-
 
 view {
   box-sizing: border-box;
