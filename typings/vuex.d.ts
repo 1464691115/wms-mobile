@@ -22,26 +22,25 @@ declare module 'vuex' {
 
     type _Store<S, M extends ModuleTree<S>> = Omit<Store<S>, ReconstitutionFnKey> & {
         state: GetStoreValue<M, 'state'>
-         /** 如遇到type没有提示的情况下，请检查 modules里是否有 空对象的 属性，如有请删除 */
-        dispatch<K extends keyof T, T = GetParmType<M, 'dispathAct'>>(type: K, payload?: Parameters<T[K]>[1]): any
-         /** 如遇到type没有提示的情况下，请检查 modules里是否有 空对象的 属性，如有请删除 */
-        commit<K extends keyof T, T = GetParmType<M, 'mutations'>>(type: K, payload: Parameters<T[K]>[1]): ReturnType<T[K]>
-         /** 如遇到type没有提示的情况下，请检查 modules里是否有 空对象的 属性，如有请删除 */
-        getters: {
-            [K in keyof GetParmType<M, 'getters'>]: ReturnType<GetParmType<M, 'getters'>[K]>
-        }
+        /** 如遇到type没有提示的情况下，请检查 store/index.ts 是否报错，actions属性不能为空，请给给空字段 */
+        dispatch<K extends keyof T, T = GetParmType<M, 'dispathAct'>>(type: K, payload?: T[K]['params']): T[K]['result']
+        /** 如遇到type没有提示的情况下，请检查 store/index.ts 是否报错，actions属性不能为空，请给给空字段 */
+        commit<K extends keyof T, T = GetParmType<M, 'mutations'>>(type: K, payload: T[K]['params']): T[K]['result']
+        /** 如遇到type没有提示的情况下，请检查 store/index.ts 是否报错，actions属性不能为空，请给给空字段 */
+        getters: GetParmType<M, 'getters'>['result']
     }
 
     type GetStoreValue<S, K extends ReconstitutionStKey> = { [KS in keyof S]: S[KS][K] }
 
 
     type GetParmType<T, V extends ReconstitutionStKey> = valueOfU<{
-        [K in keyof T]: valueOfU<{
-            [P in keyof Exclude<T[K][V], undefined>]: {
-                [C in P as `${K}/${P}`]: Exclude<T[K][V], undefined>[C]
-            }
-        }>
+        [K in keyof T]: {
+            [C in keyof Exclude<T[K][V], undefined> as `${K}/${C}`]: { result: ReturnType<Exclude<T[K][V], undefined>[C]>, params: Parameters<Exclude<T[K][V], undefined>[C]>[1] }
+        }
     }>
+
+    type GetPathValue<T> = T extends `${infer key}/${infer value}` ? value : never
+    type GetPathKey<T> = T extends `${infer key}/${infer value}` ? key : never
 
     export function createStore<S, M extends ModuleTree<S>>(options: _StoreOptions<S, M>): _Store<S, M>;
 
@@ -49,5 +48,3 @@ declare module 'vuex' {
     export function useStore<S = State>(injectKey?: InjectionKey<typeof store> | string): typeof store;
 
 }
-
-
