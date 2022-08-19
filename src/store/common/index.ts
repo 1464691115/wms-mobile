@@ -1,4 +1,3 @@
-
 export function installState<S>(options: S) {
     return options
 }
@@ -15,13 +14,9 @@ type GetReturnType<T> = T extends (...args: any) => infer R ? R : any;
 
 interface ModulesOptions<S, M, A, G> {
     namespaced?: boolean,
-    /** !警告：不能给空对象，如不需要请删除该字段 */
     state: S,
-    /** !警告：不能给空对象，如不需要请删除该字段 */
     mutations?: M,
-    /** !警告：不能给空对象，如不需要请删除该字段 */
     getters?: G,
-    /** !警告：不能给空对象，如不需要请删除该字段 */
     actions: A | {
         [AK in keyof A]: <ST extends SotreType<S, M, A, G>>(store: ST, payload: any) => any
     }
