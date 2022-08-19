@@ -3,7 +3,7 @@
     "version": "0.0.1",
     "scripts": {
         "sview": "node ./cli/cli.js",
-        "file": "ts-node -T ./cli/pr-cli.js",
+        "file": "ts-node -T ./cli/pr-cli.js off",
         "start": "yarn file && yarn run dev:mp-weixin",
         "start:w": "start yarn file --watch && yarn run dev:mp-weixin",
         "dev:app": "uni -p app",
