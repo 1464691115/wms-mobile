@@ -1,10 +1,6 @@
-export function installState<S>(options: S) {
-    return options
-}
-
 interface SotreType<S, M, A, G> {
     commit<CK extends keyof M>(type: CK, params: GetParameters<M[CK]>[1]): any
-    dispatch<DK extends keyof A>(type: DK, params: GetParameters<A[DK]>[1]): GetReturnType<A[DK]>
+    dispatch<DK extends keyof A, O extends { root: boolean }>(type: O extends { root: true } ? string : DK, params: GetParameters<A[DK]>[1], options?: O): GetReturnType<A[DK]>
     getters: { [GK in keyof G]: GetReturnType<G[GK]> }
     state: S
 }
@@ -29,6 +25,13 @@ export function createModules<
     A,
     G extends Record<any, (state: S) => any>
 >(options: ModulesOptions<S, M, A, G>): ModulesOptions<S, M, A, G>;
+
+
+
 export function createModules(options) {
     return { namespaced: true, ...options }
+}
+
+export function installState<S>(options: S) {
+    return options
 }

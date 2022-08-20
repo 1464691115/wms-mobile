@@ -50,7 +50,7 @@
         "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-3040820220424001",
         "@dcloudio/uni-ui": "^1.4.16",
         "sass": "^1.51.0",
-        "sview-ui": "^0.0.6",
+        "sview-ui": "^0.0.7",
         "vite-plugin-style-import": "1.4.1",
         "vite-plugin-vue-setup-extend": "^0.4.0",
         "vue": "^3.2.37",

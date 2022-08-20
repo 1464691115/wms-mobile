@@ -4,8 +4,8 @@
     v-html="icon"
     :style="{
       fontSize: Px(props.size || 48),
-      width:  Px(props.size || 48),
-      height:  Px(props.size || 48),
+      width: Px(props.size || 48),
+      height: Px(props.size || 48),
       color: props.color || colorTheme,
     }"
   />
@@ -15,7 +15,7 @@
 import theme from "@config/theme";
 import { Px } from "sview-ui";
 import { computed } from "vue";
-import { ICON_UNICODE, ICON_UNICODE_VALUE } from "@/enums";
+import { ICON_UNICODE, ICON_UNICODE_VALUE } from "./types";
 
 interface Props {
   icon?: ICON_UNICODE_VALUE;
