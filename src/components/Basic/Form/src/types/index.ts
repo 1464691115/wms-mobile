@@ -1,6 +1,9 @@
 export namespace BasicForm {
 
     export interface FormProps {
+        /** 是否显示 分号， 如果为 字符串则替换 */
+        colon?: boolean | string;
+
         /** 整个表单标题 */
         formTitle?: string;
 
@@ -29,7 +32,7 @@ export namespace BasicForm {
         text?: string;
     }
 
-    export interface FormSchema {
+    export interface FormSchema extends Pick<FormProps, 'colon'> {
         field: string
         label?: string | ((schemaItem: Exclude<FormSchema, 'label'>) => string)
         /** 组件类型 */

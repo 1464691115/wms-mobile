@@ -1,11 +1,16 @@
 <template>
   <view class="basic-form" @click.stop="() => {}">
     <view class="basic-form-content">
-      <text>{{ formProps.formTitle || "" }}</text>
-      <s-gap height="10px" />
+      <slot name="formHeader">
+        <text>{{ formProps.formTitle || "" }}</text>
+        <s-gap v-if="formProps.formTitle" height="10px" />
+      </slot>
 
       <view v-for="item in formProps.schemas || []" :key="item.field" class="form-item">
-        <view class="label">{{ filterLabel(item.label, item) }}</view>
+        <view class="label">
+          {{ filterLabel(item.label, item)}}
+          {{ filterColon(item.colon || formProps.colon) }}
+        </view>
 
         <s-input
           v-if="item.component == 'Input'"
@@ -31,36 +36,42 @@
       </view>
     </view>
 
-    <view class="basic-form-btns flex-d-r">
-      <s-button
-        v-if="formProps.showResetButton === true"
-        :title="formProps.resetButtonOptions?.text || '重 置'"
-        shape="square"
-        class="btn-text"
-        @tap.stop="btnHandleReset"
-      />
-      <s-button
-        v-if="formProps.showSubmitButton === true"
-        :title="formProps.submitButtonOptions?.text || '提 交'"
-        shape="square"
-        type="primary"
-        class="btn-text"
-        @tap.stop="btnHandleSubmit"
-      />
-    </view>
+    <slot name="formFooter">
+      <view class="basic-form-btns flex-d-r">
+        <s-button
+          v-if="formProps.showResetButton === true"
+          :title="formProps.resetButtonOptions?.text || '重 置'"
+          shape="square"
+          class="btn-text"
+          @tap.stop="btnHandleReset"
+        />
+        <s-button
+          v-if="formProps.showSubmitButton === true"
+          :title="formProps.submitButtonOptions?.text || '提 交'"
+          shape="square"
+          type="primary"
+          class="btn-text"
+          @tap.stop="btnHandleSubmit"
+        />
+      </view>
+    </slot>
   </view>
 </template>
 <script lang="ts" setup>
 import { ApiErrorMsg } from "@/api/instanceof";
 import { showToast, funcForIn } from "sview-ui";
 import { nextTick, onMounted, reactive, ref, watch } from "vue";
+import { filterComponentsProps, filterLabel, filterColon } from "./filter";
 import { BasicForm } from "./types";
 
 onMounted(async () => {
   emits("register", formMethods);
 });
 
-interface Props {
+interface Props extends BasicForm.FormProps {
+  /** 是否显示 分号， 如果为 字符串则替换 */
+  colon?: boolean | string;
+
   /** 整个表单标题 */
   formTitle?: string;
 
@@ -96,13 +107,16 @@ watch(
   () => props,
   (val) => {
     funcForIn(val, formProps);
+    if (formProps.schemas) {
+      formProps.schemas = filterComponentsProps(formProps.schemas, {
+        schema: formProps.schemas,
+        formActionType: formMethods,
+        formModal: formData.value,
+      });
+    }
   },
   { immediate: true }
 );
-
-function filterLabel(label?: string | Function, item) {
-  return typeof label == "string" || label === undefined ? label : label(item);
-}
 
 /** 重置表单 */
 function btnHandleReset() {
@@ -113,29 +127,25 @@ function btnHandleSubmit() {
   handleSubmit();
 }
 
-/** 获取表单值 */
-function getFieldsValue() {
+const getFieldsValue: BasicForm.FormMethodsType["getFieldsValue"] = () => {
   return formData.value;
-}
+};
 
-/** 设置表单值 */
-function setFieldsValue(values = {}) {
+const setFieldsValue: BasicForm.FormMethodsType["setFieldsValue"] = (values = {}) => {
   return new Promise((resolve) => {
     funcForIn(values, formData.value);
     nextTick(() => resolve(true));
   });
-}
+};
 
-/** 重置表单 */
-function resetFields() {
+const resetFields: BasicForm.FormMethodsType["resetFields"] = () => {
   return new Promise((resolve) => {
     formData.value = {};
     nextTick(() => resolve(true));
   });
-}
+};
 
-/** 提交表单 */
-function handleSubmit() {
+const handleSubmit: BasicForm.FormMethodsType["submit"] = () => {
   return new Promise(async (resolve, reject) => {
     if (formProps.submitFunc !== undefined) {
       formProps.submitFunc().finally(() => resolve(true));
@@ -152,15 +162,21 @@ function handleSubmit() {
       }
     }
   });
-}
+};
 
-/** 设置表单组件的 Props */
-function setProps(_formProps: Partial<Props>) {
-  funcForIn(_formProps, formProps);
-}
+const setProps: BasicForm.FormMethodsType["setProps"] = (_formProps) => {
+  return new Promise(async (resolve, reject) => {
+    funcForIn(_formProps, formProps);
+    formProps.schemas = filterComponentsProps(formProps.schemas, {
+      schema: formProps.schemas,
+      formActionType: formMethods,
+      formModal: formData.value,
+    });
+    nextTick(() => resolve(true));
+  });
+};
 
-/** 根据 field 删除 Schema */
-function removeSchemaByFiled(filed: string | string[]) {
+const removeSchemaByFiled: BasicForm.FormMethodsType["removeSchemaByFiled"] = (filed) => {
   return new Promise(async (resolve, reject) => {
     let array = Array.isArray(filed) ? filed : new Array(filed);
     formProps.schemas = formProps.schemas?.filter((el) => {
@@ -173,14 +189,13 @@ function removeSchemaByFiled(filed: string | string[]) {
 
     nextTick(() => resolve(true));
   });
-}
+};
 
-/** 插入到指定 filed 后面，如果没传指定 field，则插入到最后,当 first = true 时插入到第一个位置 */
-function appendSchemaByField(
-  schema: BasicForm.FormSchema,
-  prefixField?: string,
-  first?: boolean
-) {
+const appendSchemaByField: BasicForm.FormMethodsType["appendSchemaByField"] = (
+  schema,
+  prefixField,
+  first
+) => {
   return new Promise(async (resolve, reject) => {
     const prefixIndex =
       formProps.schemas?.findIndex((s_el) => s_el.field == prefixField) || -1;
@@ -199,9 +214,8 @@ function appendSchemaByField(
 
     nextTick(() => resolve(true));
   });
-}
+};
 
-/** 更新表单的 schema, 只更新函数所传的参数 */
 const updateSchema: BasicForm.FormMethodsType["updateSchema"] = (data) => {
   return new Promise(async (resolve, reject) => {
     const array = Array.isArray(data) ? data : new Array(data);
@@ -223,7 +237,6 @@ const updateSchema: BasicForm.FormMethodsType["updateSchema"] = (data) => {
   });
 };
 
-/** 重置表单的 schema, 只更新函数所传的参数 */
 const resetSchema: BasicForm.FormMethodsType["resetSchema"] = (data) => {
   return new Promise(async (resolve) => {
     const array = Array.isArray(data) ? data : new Array(data);
@@ -243,6 +256,11 @@ const formMethods: BasicForm.FormMethodsType = {
   updateSchema,
   resetSchema,
 };
+
+defineExpose({
+  ...formMethods,
+  formData,
+});
 </script>
 <style lang="scss" scoped>
 .basic-form {
@@ -251,7 +269,7 @@ const formMethods: BasicForm.FormMethodsType = {
 
   .basic-form-content {
     padding: 20rpx;
-    min-height: 200rpx;
+    min-height: 100rpx;
     font-size: 32rpx;
 
     text {
@@ -261,10 +279,10 @@ const formMethods: BasicForm.FormMethodsType = {
 
   .basic-form-btns {
     width: 100%;
-    height: 80rpx;
 
     .btn-text {
       @include flex-center;
+      height: 80rpx;
       margin: 0 20px;
       padding: 20rpx 0;
       flex: 1;
@@ -274,6 +292,10 @@ const formMethods: BasicForm.FormMethodsType = {
 
   .form-item {
     margin-bottom: 20rpx;
+
+    &:last-child {
+      margin-bottom: 0rpx;
+    }
 
     .label {
       margin-bottom: 10rpx;
