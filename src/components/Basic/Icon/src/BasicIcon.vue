@@ -35,5 +35,6 @@ const icon = computed(() => {
 <style scoped>
 .font-icon {
   transition: all 0.3s;
+  font-style: normal;
 }
 </style>
