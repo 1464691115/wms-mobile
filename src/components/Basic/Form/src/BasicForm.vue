@@ -1,14 +1,40 @@
 <template>
   <view class="basic-form" @click.stop="() => {}">
-    <view class="basic-form-content">
-      <slot name="formHeader">
-        <text>{{ formProps.formTitle || "" }}</text>
-        <s-gap v-if="formProps.formTitle" height="10px" />
-      </slot>
+    <view
+      class="basic-form-content"
+      :style="{
+        gridTemplateColumns: 'repeat(24, 1fr)',
+        gap: (formProps.gutter || [0, 0]).map((el) => Px(el)).join(' '),
+      }"
+    >
+      <view
+        v-if="formProps.formTitle || $slots.formHeader"
+        class="basic-form-content_title"
+      >
+        <slot name="formHeader" :formData="formData">
+          <text>{{ formProps.formTitle || "" }}</text>
+        </slot>
+      </view>
 
-      <view v-for="item in formProps.schemas || []" :key="item.field" class="form-item">
-        <view class="label">
-          {{ filterLabel(item.label, item)}}
+      <view
+        v-for="(item, index) in formProps.schemas || []"
+        class="form-item"
+        :key="item.field"
+        :style="{
+          gridColumnEnd: `span ${formFormItemSpan[index]}`,
+          ...getFormLayoutStyle,
+          ...(item.rowStyle || formProps.baseRowStyle || {}),
+        }"
+      >
+        <view
+          class="label"
+          :style="{
+            width: Px(item.labelWidth || formProps.labelWidth || '100%'),
+            minWidth: Px(item.labelWidth || formProps.labelWidth),
+            textAlign: item.labelAlign || formProps.labelAlign || 'left',
+          }"
+        >
+          {{ filterLabel(item.label, item) }}
           {{ filterColon(item.colon || formProps.colon) }}
         </view>
 
@@ -16,19 +42,19 @@
           v-if="item.component == 'Input'"
           v-model="formData[item.field]"
           :placeholder="
-            item.componentProps.placeholder || `请填写${filterLabel(item.label, item)}`
+            item.componentProps?.placeholder || `请填写${filterLabel(item.label, item)}`
           "
-          :custom-props="item.componentProps"
+          :custom-props="item.componentProps || {}"
         />
 
         <view v-else-if="item.component == 'Textarea'" class="input">
           <textarea
             v-model="formData[item.field]"
-            :maxlength="item.componentProps.maxlength || -1"
+            :maxlength="item.componentProps?.maxlength || -1"
             :placeholder="
-              item.componentProps.placeholder || `请填写${filterLabel(item.label, item)}`
+              item.componentProps?.placeholder || `请填写${filterLabel(item.label, item)}`
             "
-            :auto-height="item.componentProps.autoHeight"
+            :auto-height="item.componentProps?.autoHeight"
             class="input-textarea"
             style="width: 100%"
           />
@@ -36,21 +62,29 @@
       </view>
     </view>
 
-    <slot name="formFooter">
+    <slot name="formFooter" :formData="formData">
       <view class="basic-form-btns flex-d-r">
         <s-button
           v-if="formProps.showResetButton === true"
-          :title="formProps.resetButtonOptions?.text || '重 置'"
+          text="重 置"
           shape="square"
           class="btn-text"
+          :custom-props="{
+            text: '重 置',
+            shape: 'square',
+            ...(formProps.resetButtonOptions || {}),
+          }"
           @tap.stop="btnHandleReset"
         />
         <s-button
           v-if="formProps.showSubmitButton === true"
-          :title="formProps.submitButtonOptions?.text || '提 交'"
-          shape="square"
-          type="primary"
           class="btn-text"
+          :custom-props="{
+            text: '提 交',
+            shape: 'square',
+            type: 'primary',
+            ...(formProps.resetButtonOptions || {}),
+          }"
           @tap.stop="btnHandleSubmit"
         />
       </view>
@@ -59,8 +93,8 @@
 </template>
 <script lang="ts" setup>
 import { ApiErrorMsg } from "@/api/instanceof";
-import { showToast, funcForIn } from "sview-ui";
-import { nextTick, onMounted, reactive, ref, watch } from "vue";
+import { showToast, funcForIn, createArray } from "sview-ui";
+import { computed, CSSProperties, nextTick, onMounted, reactive, ref, watch } from "vue";
 import { filterComponentsProps, filterLabel, filterColon } from "./filter";
 import { BasicForm } from "./types";
 
@@ -68,31 +102,31 @@ onMounted(async () => {
   emits("register", formMethods);
 });
 
-interface Props extends BasicForm.FormProps {
+interface Props<BF extends BasicForm.FormProps = BasicForm.FormProps> {
   /** 是否显示 分号， 如果为 字符串则替换 */
-  colon?: boolean | string;
+  colon?: BF["colon"];
 
-  /** 整个表单标题 */
-  formTitle?: string;
+  baseColProps?: BF["baseColProps"];
+  baseRowStyle?: BF["baseRowStyle"];
 
-  /** 提交方法 */
-  submitApiFunc?: (...arg) => Promise<any>;
+  labelWidth?: BF["labelWidth"];
+  labelAlign?: BF["labelAlign"];
+  gutter?: BF["gutter"];
 
-  /** 表单配置 */
-  schemas?: BasicForm.FormSchema[];
+  formTitle?: BF["formTitle"];
 
-  /** 是否显示重置按钮 默认 false*/
-  showResetButton?: boolean;
-  /** 重置按钮配置见下方 */
-  resetButtonOptions?: BasicForm.ActionButtonOption;
-  /** 是否显示提交按钮   默认 false*/
-  showSubmitButton?: boolean;
-  /** 确认按钮配置见下方 */
-  submitButtonOptions?: BasicForm.ActionButtonOption;
-  /** 自定义重置按钮逻辑 */
-  resetFunc?: () => Promise<void>;
-  /** 自定义提交按钮逻辑 */
-  submitFunc?: () => Promise<void>;
+  layout?: BF["layout"];
+
+  submitApiFunc?: BF["submitApiFunc"];
+
+  schemas?: BF["schemas"];
+
+  showResetButton?: BF["showResetButton"];
+  resetButtonOptions?: BF["resetButtonOptions"];
+  showSubmitButton?: BF["showSubmitButton"];
+  submitButtonOptions?: BF["submitButtonOptions"];
+  resetFunc?: BF["resetFunc"];
+  submitFunc?: BF["submitFunc"];
 }
 
 const props = defineProps<Props>();
@@ -102,6 +136,31 @@ const emits = defineEmits<{
 
 const formData = ref({});
 const formProps = reactive<Partial<Props>>({});
+
+/** 获取当前 item所占的行 */
+const formFormItemSpan = computed(() => {
+  if (!formProps.schemas) return createArray(formProps.baseColProps?.span || 4, 12);
+
+  return formProps.schemas.map((el) => {
+    return el.colProps?.span || formProps.baseColProps?.span || 12;
+  });
+});
+
+/** 获取当前 表单的布局样式 */
+const getFormLayoutStyle = computed<CSSProperties>(() => {
+  const layout = formProps.layout;
+  switch (layout) {
+    case "vertical":
+      return {};
+
+    case "horizontal":
+    default:
+      return {
+        display: "flex",
+        alignItems: "cetner",
+      };
+  }
+});
 
 watch(
   () => props,
@@ -139,9 +198,13 @@ const setFieldsValue: BasicForm.FormMethodsType["setFieldsValue"] = (values = {}
 };
 
 const resetFields: BasicForm.FormMethodsType["resetFields"] = () => {
-  return new Promise((resolve) => {
-    formData.value = {};
-    nextTick(() => resolve(true));
+  return new Promise(async (resolve, reject) => {
+    if (formProps.resetFunc !== undefined) {
+      formProps.resetFunc().finally(() => resolve(true));
+    } else {
+      formData.value = {};
+      nextTick(() => resolve(true));
+    }
   });
 };
 
@@ -174,6 +237,10 @@ const setProps: BasicForm.FormMethodsType["setProps"] = (_formProps) => {
     });
     nextTick(() => resolve(true));
   });
+};
+
+const getProps: BasicForm.FormMethodsType["getProps"] = () => {
+  return formProps;
 };
 
 const removeSchemaByFiled: BasicForm.FormMethodsType["removeSchemaByFiled"] = (filed) => {
@@ -251,6 +318,7 @@ const formMethods: BasicForm.FormMethodsType = {
   resetFields,
   submit: handleSubmit,
   setProps,
+  getProps,
   removeSchemaByFiled,
   appendSchemaByField,
   updateSchema,
@@ -263,53 +331,64 @@ defineExpose({
 });
 </script>
 <style lang="scss" scoped>
+::v-deep .basic-form-btns {
+  margin-top: 20px;
+  width: 100%;
+
+  .btn-text {
+    @include flex-center;
+    height: 80rpx;
+    padding: 20rpx 0;
+    flex: 1;
+    font-size: 34rpx;
+  }
+}
+
 .basic-form {
   width: 100%;
   height: auto;
 
   .basic-form-content {
-    padding: 20rpx;
     min-height: 100rpx;
+
+    display: grid;
+
     font-size: 32rpx;
+
+    .basic-form-content_title {
+      @include font(40rpx, 50rpx, #525252, 600);
+      margin-bottom: 12px;
+      grid-column: 1/-1;
+    }
+
+    .form-item {
+      margin-bottom: 20rpx;
+      width: 100%;
+
+      &:last-child {
+        margin-bottom: 0rpx;
+      }
+
+      .label {
+        @include font(32rpx, 40px, #333, 400);
+      }
+
+      .input {
+        padding: 30rpx 30rpx;
+        border-radius: 4px;
+        border: 1px solid #dcdfe6;
+        font-size: 14px;
+        flex: 1;
+        background-color: #fff;
+
+        .input-textarea {
+          min-height: 80rpx;
+        }
+      }
+    }
 
     text {
       font-size: 40rpx;
-    }
-  }
-
-  .basic-form-btns {
-    width: 100%;
-
-    .btn-text {
-      @include flex-center;
-      height: 80rpx;
-      margin: 0 20px;
-      padding: 20rpx 0;
-      flex: 1;
-      font-size: 34rpx;
-    }
-  }
-
-  .form-item {
-    margin-bottom: 20rpx;
-
-    &:last-child {
-      margin-bottom: 0rpx;
-    }
-
-    .label {
-      margin-bottom: 10rpx;
-    }
-
-    .input {
-      padding: 10rpx 30rpx;
-      border-radius: 4px;
-      border: 1px solid #dcdfe6;
-      font-size: 14px;
-
-      .input-textarea {
-        min-height: 80rpx;
-      }
     }
   }
 }

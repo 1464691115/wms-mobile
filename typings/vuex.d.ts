@@ -4,6 +4,20 @@ import { InjectionKey } from 'vue'
 declare module '@vue/runtime-core' {
     // 声明自己的 store state
     interface State {
+        user: userEntity.Item
+
+        doctor: { info: doctorEntity.Item }
+
+        patient: patientEntity.State & {
+            /** 患者病情分类 */
+            patientType?: Record<number, string>
+        }
+
+        report: {
+            isTipsSample: boolean
+            reportType: OptionType[]
+        }
+
     }
 
     // 为 `this.$store` 提供类型声明
@@ -27,7 +41,9 @@ declare module 'vuex' {
         /** 如遇到type没有提示的情况下，请检查 store/index.ts 是否报错，actions属性不能为空，请给给空字段 */
         commit<K extends keyof T, T = GetParmType<M, 'mutations'>>(type: K, payload: T[K]['params']): T[K]['result']
         /** 如遇到type没有提示的情况下，请检查 store/index.ts 是否报错，actions属性不能为空，请给给空字段 */
-        getters: GetParmType<M, 'getters'>['result']
+        getters: {
+            [K in keyof GetParmType<M, 'getters'>]: GetParmType<M, 'getters'>[K]['result']
+        }
     }
 
     type GetStoreValue<S, K extends ReconstitutionStKey> = { [KS in keyof S]: S[KS][K] }

@@ -30,8 +30,10 @@
             "mini-types",
             "@dcloudio/types",
             "miniprogram-api-typings",
-            "sview-ui",
             "unplugin-vue-define-options"
+        ],
+        "typeRoots": [
+            "sview-ui"
         ]
     },
     "exclude": ["build", "dist", "scripts", "jest"],
@@ -42,6 +44,7 @@
         "cli/**/*.ts",
         "config/**/*.ts",
         "@dcloudio/types",
+        "./node_modules/sview-ui/typings/components.d.ts",
         "typings/**/*",
         "./*.ts",
     ]

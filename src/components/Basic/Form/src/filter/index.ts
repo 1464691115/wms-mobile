@@ -10,7 +10,7 @@ export function filterLabel(label?: string | Function, item?) {
     return typeof label == "string" || label === undefined ? label : label(item);
 }
 
-/** 过滤分号 */
+/** 过滤 冒号 */
 export function filterColon(str?: boolean | string) {
-    return typeof str === 'string' ? str : '：'
+    return typeof str === 'string' ? str : str ? '：' : ''
 }

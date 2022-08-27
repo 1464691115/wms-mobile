@@ -1,6 +1,6 @@
-import { ICON_UNICODE } from '@/enums'
 import theme from '@config/theme'
 import TabbarMinBtn from '@/static/images/tabbar-icon/update.png'
+import { ICON_UNICODE } from '@/enums'
 
 export default {
     color: '#333',

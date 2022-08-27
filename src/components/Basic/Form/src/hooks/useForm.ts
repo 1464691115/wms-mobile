@@ -1,8 +1,13 @@
 import { nextTick, onUnmounted, ref, unref, watch } from "vue";
 import { BasicForm } from "../types";
-
-export function useForm(props?: Partial<BasicForm.FormProps>): [typeof register, BasicForm.FormMethodsType] {
-    const formRef = ref<BasicForm.FormMethodsType | null>(null)
+type DeepReadonly<T> = {
+    readonly [K in keyof T]: T[K] extends string | boolean | number | undefined | null ? T[K] : DeepReadonly<T[K]>
+}
+/** 
+ * @tips 想要schema的类型提示的话请在 参数后面加上 as const 例如  useForm({} as const)
+ */
+export function useForm<P extends DeepReadonly<BasicForm.FormProps>>(props?: P): [typeof register, BasicForm.FormMethodsType<P>] {
+    const formRef = ref<any>(null)
 
     async function getForm() {
         const form = unref(formRef);
@@ -35,13 +40,14 @@ export function useForm(props?: Partial<BasicForm.FormProps>): [typeof register,
 
     }
 
-
-
-
-    const methods: BasicForm.FormMethodsType = {
+    const methods = {
         setProps: async (formProps: Partial<BasicForm.FormProps>) => {
             const form = await getForm();
             form.setProps(formProps);
+        },
+
+        getProps: () => {
+            return unref(formRef)?.getProps();
         },
 
         updateSchema: async (data: Partial<BasicForm.FormSchema> | Partial<BasicForm.FormSchema>[]) => {
@@ -60,8 +66,8 @@ export function useForm(props?: Partial<BasicForm.FormProps>): [typeof register,
             });
         },
 
-        removeSchemaByFiled: async (field: string | string[]) => {
-            unref(formRef)?.removeSchemaByFiled(field);
+        removeSchemaByFiled: async (field) => {
+            unref(formRef)?.removeSchemaByFiled(field as any);
         },
 
         // TODO promisify
@@ -71,7 +77,7 @@ export function useForm(props?: Partial<BasicForm.FormProps>): [typeof register,
 
         setFieldsValue: async (values) => {
             const form = await getForm();
-            form.setFieldsValue(values);
+            form.setFieldsValue(values as any);
         },
 
         appendSchemaByField: async (
@@ -88,6 +94,7 @@ export function useForm(props?: Partial<BasicForm.FormProps>): [typeof register,
             return form.submit();
         },
     };
+
 
     return [register, methods]
 }

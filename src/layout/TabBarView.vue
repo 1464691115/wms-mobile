@@ -54,7 +54,7 @@
           <view v-if="item.badge" class="min-item flex-center"
             ><text class="min-text">{{ item.badge > 99 ? 99 : item.badge }}</text></view
           >
-          <GlobalIcon
+          <BasicIcon
             :icon="
               item.iconfont[selectCurrentId(item, current) ? 'selectedText' : 'text']
             "
@@ -91,7 +91,7 @@ import { computed, useAttrs } from "vue";
 import { Px } from "sview-ui";
 import type { tabBarType } from "@/routes/tabbar";
 import theme from "@config/theme";
-import GlobalIcon from "../components/GlobalIcon.vue";
+import BasicIcon from "@/components/Basic/Icon/src/BasicIcon.vue";
 
 interface Props {
   slotList?: { slot; id }[];

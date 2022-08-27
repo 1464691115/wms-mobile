@@ -4,7 +4,7 @@
     "scripts": {
         "sview": "node ./cli/cli.js",
         "file": "ts-node -T ./cli/pr-cli.js off",
-        "start": "yarn file && yarn run dev:mp-weixin",
+        "start": "yarn file && yarn run dev:h5",
         "start:w": "start yarn file --watch && yarn run dev:mp-weixin",
         "dev:app": "uni -p app",
         "dev:custom": "uni -p",
@@ -50,7 +50,7 @@
         "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-3040820220424001",
         "@dcloudio/uni-ui": "^1.4.16",
         "sass": "^1.51.0",
-        "sview-ui": "^0.0.7",
+        "sview-ui": "git://gitee.com/liukesen/sview-ui.git",
         "vite-plugin-style-import": "1.4.1",
         "vite-plugin-vue-setup-extend": "^0.4.0",
         "vue": "^3.2.37",
