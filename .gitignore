@@ -2,7 +2,6 @@
 node_modules/
 unpackage/
 dist/
-docker/app
 ./*.env
 
 # local env files

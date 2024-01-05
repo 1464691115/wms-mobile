@@ -1,112 +1,115 @@
-import { nextTick, onUnmounted, ref, unref, watch } from "vue";
-import { BasicForm } from "../types";
+import { getDynamicProps } from '@/utils'
+import { nextTick, onUnmounted, ref, unref, watch } from 'vue'
+import { BaseFormPropsType } from '../props'
+import { BasicForm } from '../types'
 type DeepReadonly<T> = {
-    readonly [K in keyof T]: T[K] extends string | boolean | number | undefined | null ? T[K] : DeepReadonly<T[K]>
+  readonly [K in keyof T]: T[K] extends
+    | string
+    | boolean
+    | number
+    | undefined
+    | null
+    ? T[K]
+    : DeepReadonly<T[K]>
 }
-/** 
+
+type PropsDeepReadonly = DeepReadonly<Partial<BaseFormPropsType>>
+/**
  * @tips 想要schema的类型提示的话请在 参数后面加上 as const 例如  useForm({} as const)
  */
-export function useForm<P extends DeepReadonly<BasicForm.FormProps>>(props?: P): [typeof register, BasicForm.FormMethodsType<P>] {
-    const formRef = ref<any>(null)
+export function useForm<P extends PropsDeepReadonly>(
+  props?: P | PropsDeepReadonly,
+): [typeof register, BasicForm.FormMethodsType<P>] {
+  const formRef = ref<any>(null)
 
-    async function getForm() {
-        const form = unref(formRef);
+  async function getForm() {
+    const form = unref(formRef)
 
-        if (!form) {
-            console.error('尚未获取表单实例，请确保在执行表单操作时表单已加载');
-        }
-
-        await nextTick();
-
-        return form as Exclude<typeof form, null>
+    if (!form) {
+      console.error('尚未获取表单实例，请确保在执行表单操作时表单已加载')
     }
 
-    function register(methods) {
-        onUnmounted(() => {
-            formRef.value = null;
-        });
-        formRef.value = unref(methods)
+    await nextTick()
 
-        watch(
-            () => props,
-            () => {
-                props && methods.setProps(getDynamicProps(props));
-            },
-            {
-                immediate: true,
-                deep: true,
-            },
-        );
+    return form as Exclude<typeof form, null>
+  }
 
-    }
+  function register(methods) {
+    onUnmounted(() => {
+      formRef.value = null
+    })
+    formRef.value = unref(methods)
 
-    const methods = {
-        setProps: async (formProps: Partial<BasicForm.FormProps>) => {
-            const form = await getForm();
-            form.setProps(formProps);
-        },
+    watch(
+      () => props,
+      () => {
+        props && methods.setProps(getDynamicProps(props))
+      },
+      {
+        immediate: true,
+        deep: true,
+      },
+    )
+  }
 
-        getProps: () => {
-            return unref(formRef)?.getProps();
-        },
+  const methods = {
+    setProps: async (formProps: Partial<BaseFormPropsType>) => {
+      const form = await getForm()
+      form.setProps(formProps)
+    },
 
-        updateSchema: async (data: Partial<BasicForm.FormSchema> | Partial<BasicForm.FormSchema>[]) => {
-            const form = await getForm();
-            form.updateSchema(data);
-        },
+    getProps: () => {
+      return unref(formRef)?.getProps()
+    },
 
-        resetSchema: async (data: Partial<BasicForm.FormSchema> | Partial<BasicForm.FormSchema>[]) => {
-            const form = await getForm();
-            form.resetSchema(data);
-        },
+    updateSchema: async (
+      data: Partial<BasicForm.FormSchema> | Partial<BasicForm.FormSchema>[],
+    ) => {
+      const form = await getForm()
+      form.updateSchema(data)
+    },
 
-        resetFields: async () => {
-            getForm().then(async (form) => {
-                await form.resetFields();
-            });
-        },
+    resetSchema: async (
+      data: Partial<BasicForm.FormSchema> | Partial<BasicForm.FormSchema>[],
+    ) => {
+      const form = await getForm()
+      form.resetSchema(data)
+    },
 
-        removeSchemaByFiled: async (field) => {
-            unref(formRef)?.removeSchemaByFiled(field as any);
-        },
+    resetFields: async () => {
+      getForm().then(async (form) => {
+        await form.resetFields()
+      })
+    },
 
-        // TODO promisify
-        getFieldsValue: <T>() => {
-            return unref(formRef)?.getFieldsValue() as T;
-        },
+    removeSchemaByFiled: async (field) => {
+      unref(formRef)?.removeSchemaByFiled(field as any)
+    },
 
-        setFieldsValue: async (values) => {
-            const form = await getForm();
-            form.setFieldsValue(values as any);
-        },
+    // TODO promisify
+    getFieldsValue: <T>() => {
+      return unref(formRef)?.getFieldsValue() as T
+    },
 
-        appendSchemaByField: async (
-            schema: BasicForm.FormSchema,
-            prefixField?: string,
-            first?: boolean,
-        ) => {
-            const form = await getForm();
-            form.appendSchemaByField(schema, prefixField, first);
-        },
+    setFieldsValue: async (values) => {
+      const form = await getForm()
+      form.setFieldsValue(values as any)
+    },
 
-        submit: async (): Promise<any> => {
-            const form = await getForm();
-            return form.submit();
-        },
-    };
+    appendSchemaByField: async (
+      schema: BasicForm.FormSchema,
+      prefixField?: string,
+      first?: boolean,
+    ) => {
+      const form = await getForm()
+      form.appendSchemaByField(schema, prefixField, first)
+    },
 
+    submit: async (): Promise<any> => {
+      const form = await getForm()
+      return form.submit()
+    },
+  }
 
-    return [register, methods]
-}
-
-
-// dynamic use hook props
-function getDynamicProps<T extends Record<any, any>, U>(props: T): Partial<U> {
-    const ret = {};
-
-    Object.keys(props).map((key) => {
-        ret[key] = unref((props)[key]);
-    });
-
-    return ret as Partial<U>;
+  return [register, methods]
 }

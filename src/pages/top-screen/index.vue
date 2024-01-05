@@ -1,23 +1,37 @@
 <template>
-  <LoadView ref="loadViewRef"></LoadView>
+  <view class="top-screen-wrap align-center">
+    <image class="img" src="/static/images/common/project_logo.png" />
+  </view>
 </template>
+
 <script lang="ts" setup>
-import { ref } from "vue";
-import LoadView from "@/layout/LoadView.vue";
-import { onShow } from "@dcloudio/uni-app";
-import routes from "@/routes";
+import to from '@/routes/to'
+import { initStore } from '@/store'
+import { onLoad } from '@dcloudio/uni-app'
 
-const loadViewRef = ref<InstanceType<typeof LoadView>>();
+onLoad(async (opt) => {
+  await initStore()
 
-onShow(async () => {
-  try {
-    // 执行初始化 接口数据
-  } catch (error) {
-  } finally {
-    // 跳转到路由权重第二个的页面
-    setTimeout(() => {
-      routes.length > 1 && uni.reLaunch({ url: `/${routes[1].path}` });
-    }, 200);
+  //TODO kesen: 2023-06-29  需要 encodeURIComponent 把地址转一下 比如 redirect=encodeURIComponent('/pages/offline-detail/index?id=3')
+  if (opt?.redirect) {
+    to({
+      url: decodeURIComponent(opt.redirect),
+    })
+  } else {
   }
-});
+})
 </script>
+
+<style lang="scss" scoped>
+.top-screen-wrap {
+  width: 100vw;
+  height: 100vh;
+  background-color: #80d676;
+
+  .img {
+    @include wh(262rpx, 312rpx);
+    margin: 0 auto;
+    display: block;
+  }
+}
+</style>

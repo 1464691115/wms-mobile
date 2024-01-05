@@ -17,29 +17,29 @@
 //TODO 驼峰转换： (-)(\w)(\w*)
 //TODO 替换： \U$2$3
 
-
 //? 设计稿的样式拷贝
 
-//? 字体 蓝湖
-//TODO 查找 \s+height:\s?(\d*|#\d).*\n\s+font-size:\s?(\d*|#\d).*?\n.*\s+font-weight:\s?(\d*|\d).*?\n.*\s+color:\s?(#\w+|\w+|rgba/(.*/)).*
-//TODO 替换 \n\t\t\t@include font($2rpx, $1rpx, $3, $4);\n
-
-//? 字体 figam
-//TODO 查找 \s+height:\s?(\d*|#\d).*\n\s+font-weight:\s?(\d*|#\d).*?\n.*\s+font-size:\s?(\d*|\d).*?\n.*\s+color:\s?(#\w+|\w+|rgba/(.*/)).*
-//TODO 替换 \n\t\t\t@include font($3rpx, $1rpx, $4, $2);\n
-
-
+//? 字体
+//TODO 查找 \s?height:\s?(\d*|#\d).*\n\s?font-size:\s?(\d*|#\d).*?\n(.*\s?font-family: .*\n)?.*\s?font-weight:\s?(\d*|#\d).*?\n.*\s?color:\s?(#\d+|#\w+|rgba/(.*/)).*
+//TODO 替换 \n\t\t\t@include font($2rpx, $1rpx, $5, $4);\n
 
 declare let __wxConfig: {
-    envVersion: 'develop' | 'trial' | 'release'
+  envVersion: 'develop' | 'trial' | 'release'
 }
-
-//TODO 全局声明
 
 declare type valueOfU<T> = UnionToIntersection<T[keyof T]>
 declare type valueOfI<T> = T[keyof T]
 declare type getChildrenProps<T> = InstanceType<T>['$props']
 
+type ToUnionOfFunction<T> = T extends any ? (x: T) => any : never
+type UnionToIntersection<T> = ToUnionOfFunction<T> extends (x: infer P) => any
+  ? P
+  : never
 
-type ToUnionOfFunction<T> = T extends any ? (x: T) => any : never;
-type UnionToIntersection<T> = ToUnionOfFunction<T> extends (x: infer P) => any ? P : never;
+declare interface Fn<T = any, R = T> {
+  (...arg: T[]): R
+}
+
+declare interface PromiseFn<T = any, R = T> {
+  (...arg: T[]): Promise<R>
+}

@@ -1,56 +1,32 @@
-// 列表加载状态提示
-.u-load-more-wrap {
-    padding: 20rpx 0;
-}
-
 .line {
-    width: 100%;
-    height: 20rpx;
-    background-color: #f4f4f4;
+  width: 100%;
+  height: 20rpx;
+  background-color: #f4f4f4;
 }
-
-
 
 .message-red {
-    @include messageRed;
+  @include messageRed;
 }
 
 .place-wrap {
-    min-width: 100vw;
-    height: 1px;
-}
-
-
-.footer-btn {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 100rpx;
-
-    ::v-deep .u-btn {
-        @include font(38rpx, 38rpx, #fff, 400);
-        height: 100% !important;
-
-        &::after {
-            border-radius: 0;
-            border: none;
-        }
-    }
+  min-width: 100vw;
+  height: 1px;
 }
 
 // 主题色 （字体）
-.t-color-f {
-    color: $primary
+.font-primary {
+  color: $primary;
 }
-
 
 .loading-animation {
-    animation: loading forwards infinite ease-in-out 1s;
-    transform-origin: center center;
+  animation: loading forwards infinite ease-in-out 1s;
+  transform-origin: center center;
 }
 
+view.uni-popup {
+  z-index: 999;
+}
 
 .u-transition {
-    width: 100%;
+  width: 100%;
 }
