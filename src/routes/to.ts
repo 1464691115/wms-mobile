@@ -1,6 +1,4 @@
-import { vocabulary } from '#/store'
-import routerList, { ROUTES_URL, tabBarList } from '@/routes'
-import { queryParamsStr } from '@/utils'
+import routerList, { tabBarList } from '@/routes'
 
 type optParams = UniNamespace.NavigateToOptions &
   Pick<UniNamespace.SwitchTabOptions, 'url'> & {
@@ -46,10 +44,6 @@ function to(opt: optParams, isRefresh = false) {
   } else opt.toType ||= 'navigateTo'
 
   uni[opt.toType as string](opt)
-}
-
-export function toBack() {
-  uni.navigateBack()
 }
 
 export default to
