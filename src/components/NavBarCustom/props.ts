@@ -1,3 +1,4 @@
+import { ThemeEnum } from '@/enums/appEnum'
 import { ExtractPropTypes } from 'vue'
 
 export const baseNavBarProps = {
@@ -8,7 +9,7 @@ export const baseNavBarProps = {
     default: true,
   },
   back: Function,
-  theme: String as PropType<'light' | 'dark'>,
+  theme: String as PropType<ThemeEnum>,
   backgroundColor: String,
 }
 

@@ -31,5 +31,6 @@
   "[vue]": {
     "editor.formatOnSave": false
   },
-  "editor.snippetSuggestions": "bottom"
+  "editor.snippetSuggestions": "bottom",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import Icon from '@/components/Basic/Icon/src/Icon.vue'
+import { ThemeEnum } from '@/enums/appEnum'
 import {
   APP_PRESET_COLOR,
   WINDOWS_BACKGROUND_COLOR,
@@ -18,7 +19,7 @@ const attrs = useAttrs()
 const navBarProps = computed(() => {
   const statusOpt = {} as any
 
-  if (props.theme === 'dark') {
+  if (props.theme === ThemeEnum.DARK) {
     statusOpt.color = '#fff'
     statusOpt.backgroundColor = APP_PRESET_COLOR
     statusOpt.leftColor = '#fff'
@@ -52,37 +53,17 @@ function handleClickBack() {
 }
 </script>
 <template>
-  <uni-nav-bar
-    v-if="!$slots.default"
-    :border="false"
-    :status-bar="true"
-    height="40px"
-    v-bind="navBarProps"
-  >
+  <uni-nav-bar v-if="!$slots.default" :border="false" :status-bar="true" height="40px" v-bind="navBarProps">
     <template v-if="props.isLeft" #left>
-      <Icon
-        :icon="ICON_UNICODE.ARROW_LEFT"
-        :size="Px(50)"
-        :color="navBarProps.leftColor"
-        @tap.stop="() => handleClickBack()"
-      />
+      <Icon :icon="ICON_UNICODE.ARROW_LEFT" :size="Px(50)" :color="navBarProps.leftColor"
+        @tap.stop="() => handleClickBack()" />
     </template>
   </uni-nav-bar>
 
-  <uni-nav-bar
-    v-else
-    :border="false"
-    :status-bar="true"
-    height="40px"
-    v-bind="navBarProps"
-  >
+  <uni-nav-bar v-else :border="false" :status-bar="true" height="40px" v-bind="navBarProps">
     <template v-if="props.isLeft" #left>
-      <Icon
-        :icon="ICON_UNICODE.ARROW_LEFT"
-        :size="Px(50)"
-        :color="navBarProps.leftColor"
-        @tap.stop="() => handleClickBack()"
-      />
+      <Icon :icon="ICON_UNICODE.ARROW_LEFT" :size="Px(50)" :color="navBarProps.leftColor"
+        @tap.stop="() => handleClickBack()" />
     </template>
     <template>
       <slot name="default" />
