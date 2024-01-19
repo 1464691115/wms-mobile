@@ -1,5 +1,6 @@
 {
   "name": "uniapp-vue3-ts",
+  "description": "uniapp-vue3-模板",
   "version": "0.0.1",
   "scripts": {
     "file": "ts-node -T ./cli/pr-cli.js",

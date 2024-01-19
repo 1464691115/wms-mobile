@@ -1,11 +1,11 @@
 <template>
   <view class="top-screen-wrap align-center">
-    <image class="img" src="/static/images/common/project_logo.png" />
   </view>
 </template>
 
 <script lang="ts" setup>
 import to from '@/routes/to'
+import { toHome } from '@/routes/toFn';
 import { initStore } from '@/store'
 import { onLoad } from '@dcloudio/uni-app'
 
@@ -18,6 +18,7 @@ onLoad(async (opt) => {
       url: decodeURIComponent(opt.redirect),
     })
   } else {
+    toHome()
   }
 })
 </script>

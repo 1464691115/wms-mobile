@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onLaunch } from '@dcloudio/uni-app'
+import { getAppEnvConfig } from './utils/env';
 import { handleUpdateManager } from './utils/update'
 
 onLaunch(async function () {
@@ -17,7 +18,15 @@ onLaunch(async function () {
       console.log('静音设置失败')
     },
   })
+
+  uni.loadFontFace({
+    global: true,
+    family: 'SH',
+    source: `url("${VITE_GLOB_FONT_URL}")`,
+  })
 })
+
+const { VITE_GLOB_FONT_URL } = getAppEnvConfig()
 
 </script>
 
