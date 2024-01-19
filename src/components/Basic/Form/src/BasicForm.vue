@@ -32,6 +32,7 @@
             })
           "
           class="form-item"
+          :class="{ 'form-item-required': item.required === true }"
           :style="{
             gridColumnEnd: `span ${formFormItemSpan[index]}`,
             ...getFormLayoutStyle,
@@ -49,29 +50,58 @@
             {{ filterLabel(item.label, item) }}
             {{ filterColon(item.colon || formProps.colon) }}
           </view>
+          <view class="flex-1">
+            <BasicInput
+              v-if="item.component == ComponentOptions.Input"
+              v-model="formData[item.field]"
+              :placeholder="
+                item.componentProps?.placeholder ||
+                `请填写${filterLabel(item.label, item)}`
+              "
+              input-border
+              :custom-props="readComponentPropsItem(item) || {}"
+            />
 
-          <BasicInput
-            v-if="item.component == 'Input'"
-            v-model="formData[item.field]"
-            :placeholder="
-              item.componentProps?.placeholder ||
-              `请填写${filterLabel(item.label, item)}`
-            "
-            input-border
-            :custom-props="item.componentProps || {}"
-          />
+            <uni-easyinput
+              v-if="item.component == ComponentOptions.InputNumber"
+              v-model="formData[item.field]"
+              type="number"
+              :placeholder="
+                item.componentProps?.placeholder ||
+                `请填写${filterLabel(item.label, item)}`
+              "
+              input-border
+              :custom-props="readComponentPropsItem(item) || {}"
+            />
 
-          <uni-easyinput
-            v-else-if="item.component == 'Textarea'"
-            v-model="formData[item.field]"
-            type="textarea"
-            :maxlength="item.componentProps?.maxlength || -1"
-            :placeholder="
-              item.componentProps?.placeholder ||
-              `请填写${filterLabel(item.label, item)}`
-            "
-            :auto-height="item.componentProps?.autoHeight"
-          />
+            <uni-easyinput
+              v-else-if="item.component == ComponentOptions.Textarea"
+              v-model="formData[item.field]"
+              type="textarea"
+              :maxlength="item.componentProps?.maxlength || -1"
+              :placeholder="
+                item.componentProps?.placeholder ||
+                `请填写${filterLabel(item.label, item)}`
+              "
+              :auto-height="item.componentProps?.autoHeight"
+            />
+
+            <uni-data-checkbox
+              v-else-if="item.component == ComponentOptions.GroupRadio"
+              v-bind="readComponentPropsItem(item)"
+              v-model="formData[item.field]"
+            />
+
+            <uni-datetime-picker
+              v-else-if="item.component == ComponentOptions.DateTime"
+              v-bind="readComponentPropsItem(item)"
+              :value="formData[item.field]"
+              rangeSeparator="~"
+              @change="
+                (e) => (formData[item.field] = isArray(e) ? e.join('~') : e)
+              "
+            />
+          </view>
         </view>
       </template>
     </view>
@@ -123,11 +153,18 @@ import {
   filterColon,
   schemaOrFn,
 } from './filter'
-import type { BasicForm } from './types'
+import { BasicForm, ComponentOptions } from './types'
 import { baseFormProps, BaseFormPropsType } from './props'
-import { createArray, funcForIn, showToast } from '@/utils/lib/s-view'
+import {
+  createArray,
+  deepClone,
+  funcForIn,
+  showToast,
+} from '@/utils/lib/s-view'
 import BasicInput from '../../Input/src/BasicInput.vue'
 import BasicButton from '../../Button/src/BasicButton.vue'
+import { isArray, isFunction, isObject, isString } from '@/utils/is'
+import { APP_PRESET_COLOR } from '@/settings/designSetting'
 
 onMounted(async () => {
   emits('register', formMethods)
@@ -191,7 +228,9 @@ function btnHandleReset() {
   }
 }
 /** 提交表单 */
-function btnHandleSubmit() {
+async function btnHandleSubmit() {
+  await validate()
+
   handleSubmit()
 }
 
@@ -321,11 +360,78 @@ const resetSchema: BasicForm.FormMethodsType['resetSchema'] = (data) => {
   })
 }
 
+const validate: BasicForm.FormMethodsType['validate'] = () => {
+  return new Promise((resolve, rej) => {
+    const formData = formMethods.getFieldsValue()
+    try {
+      const self_props = formMethods.getProps()
+      const self_params = self_props.schemas?.map((el) => {
+        if (!formData[el.field] && el.required) {
+          const msg = `请填写${el.label}`
+          throw msg
+        } else if (
+          el.rule &&
+          isString(formData[el.field]) &&
+          !RegExp(escapeRegExp(el.rule)).test(formData[el.field])
+        ) {
+          const msg = el.ruleMsg || `${el.label}格式有误，请检查`
+          throw msg
+        }
+        return { title: el.field, value: formData[el.field] || null }
+      })
+
+      if (!self_params) rej()
+      else resolve(self_params)
+    } catch (error) {
+      console.error(error)
+      if (isString(error)) {
+        showToast(error)
+        rej(error)
+      }
+    }
+  })
+  function escapeRegExp(string) {
+    return string.replace(/\\{2}(\w)/g, '\\$1')
+    //$&表示整个被匹配的字符串
+  }
+}
+
+function readComponentPropsItem(item) {
+  const { component = '', componentProps = {} } = deepClone(item)
+
+  if (!componentProps) return {}
+  if (!component) item.component = ComponentOptions.Input
+
+  switch (component) {
+    case ComponentOptions.GroupRadio:
+      componentProps.localdata = (componentProps.localdata || []).map((el) =>
+        !isObject(el) ? { text: el, value: el } : el,
+      )
+      componentProps.selectedColor =
+        componentProps.selectedColor ?? APP_PRESET_COLOR
+      break
+    case ComponentOptions.DateTime:
+      break
+    case ComponentOptions.Input:
+    default:
+      break
+  }
+
+  return isFunction(componentProps)
+    ? componentProps({
+        formModel: formData,
+        formActionType: formMethods,
+        schema: item,
+      })
+    : componentProps
+}
+
 const formMethods: BasicForm.FormMethodsType = {
   getFieldsValue,
   setFieldsValue,
   resetFields,
   submit: handleSubmit,
+  validate,
   setProps,
   getProps,
   removeSchemaByFiled,
@@ -380,6 +486,16 @@ defineExpose({
 
       .label {
         @include font(32rpx, 40px, #333, 400);
+        white-space: nowrap;
+      }
+    }
+
+    .form-item-required {
+      .label {
+        &::before {
+          content: '*';
+          color: rgb(207, 52, 52);
+        }
       }
     }
   }
