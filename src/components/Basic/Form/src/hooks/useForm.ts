@@ -1,109 +1,139 @@
-import { getDynamicProps } from "@/utils";
-import { nextTick, onUnmounted, ref, unref, watch } from "vue";
-import { BaseFormPropsType } from "../props";
-import { BasicForm } from "../types";
+import { getDynamicProps } from '@/utils'
+import { nextTick, onUnmounted, ref, unref, watch } from 'vue'
+import { BaseFormPropsType } from '../props'
+import { BasicForm } from '../types'
 type DeepReadonly<T> = {
-    readonly [K in keyof T]: T[K] extends string | boolean | number | undefined | null ? T[K] : DeepReadonly<T[K]>
+  readonly [K in keyof T]: T[K] extends
+    | string
+    | boolean
+    | number
+    | undefined
+    | null
+    ? T[K]
+    : DeepReadonly<T[K]>
 }
 
 type PropsDeepReadonly = DeepReadonly<Partial<BaseFormPropsType>>
-/** 
+/**
  * @tips 想要schema的类型提示的话请在 参数后面加上 as const 例如  useForm({} as const)
  */
-export function useForm<P extends PropsDeepReadonly>(props?: P | PropsDeepReadonly): [typeof register, BasicForm.FormMethodsType<P>] {
-    const formRef = ref<any>(null)
+export function useForm<P extends PropsDeepReadonly>(
+  props?: P | PropsDeepReadonly,
+): [typeof register, BasicForm.FormMethodsType<P>] {
+  const formRef = ref<any>(null)
 
-    async function getForm() {
-        const form = unref(formRef);
+  const tasksList = [] as any[]
 
-        if (!form) {
-            console.error('尚未获取表单实例，请确保在执行表单操作时表单已加载');
+  async function getForm(this: any) {
+    const that = this
+    await nextTick()
+
+    const form = unref(formRef)
+
+    if (!form) {
+      console.error('尚未获取表单实例，操作将在表单初始化后按先入后出顺序执行')
+
+      return Object.keys(methods).reduce((pre, cur) => {
+        pre[cur] = function (...arg) {
+          tasksList.push(methods[cur].bind(that, ...arg))
         }
-
-        await nextTick();
-
-        return form as Exclude<typeof form, null>
+        return pre
+      }, {})
     }
 
-    function register(methods) {
-        onUnmounted(() => {
-            formRef.value = null;
-        });
-        formRef.value = unref(methods)
+    return form as Exclude<typeof form, null>
+  }
 
-        watch(
-            () => props,
-            () => {
-                props && methods.setProps(getDynamicProps(props));
-            },
-            {
-                immediate: true,
-                deep: true,
-            },
-        );
+  function register(methods) {
+    onUnmounted(() => {
+      formRef.value = null
+    })
+    formRef.value = unref(methods)
 
-    }
+    watch(
+      () => props,
+      () => {
+        if (props) {
+          methods.setProps(getDynamicProps(props))
 
-    const methods = {
-        setProps: async (formProps: Partial<BaseFormPropsType>) => {
-            const form = await getForm();
-            form.setProps(formProps);
-        },
+          nextTick().then(async () => {
+            for (let i = tasksList.length - 1; i >= 0; i--) {
+              const element = tasksList[i]
+              await element()
+            }
+          })
+        }
+      },
+      {
+        immediate: true,
+        deep: true,
+      },
+    )
+  }
 
-        getProps: () => {
-            return unref(formRef)?.getProps();
-        },
+  const methods = {
+    setProps: async (formProps: Partial<BaseFormPropsType>) => {
+      const form = await getForm()
+      form.setProps(formProps)
+    },
 
-        updateSchema: async (data: Partial<BasicForm.FormSchema> | Partial<BasicForm.FormSchema>[]) => {
-            const form = await getForm();
-            form.updateSchema(data);
-        },
+    getProps: () => {
+      return unref(formRef)?.getProps()
+    },
 
-        resetSchema: async (data: Partial<BasicForm.FormSchema> | Partial<BasicForm.FormSchema>[]) => {
-            const form = await getForm();
-            form.resetSchema(data);
-        },
+    updateSchema: async (
+      data: Partial<BasicForm.FormSchema> | Partial<BasicForm.FormSchema>[],
+    ) => {
+      const form = await getForm()
+      form.updateSchema(data)
+    },
 
-        resetFields: async () => {
-            getForm().then(async (form) => {
-                await form.resetFields();
-            });
-        },
+    resetSchema: async (
+      data: Partial<BasicForm.FormSchema> | Partial<BasicForm.FormSchema>[],
+    ) => {
+      const form = await getForm()
+      form.resetSchema(data)
+    },
 
-        removeSchemaByFiled: async (field) => {
-            unref(formRef)?.removeSchemaByFiled(field as any);
-        },
+    resetFields: async () => {
+      getForm().then(async (form) => {
+        await form.resetFields()
+      })
+    },
 
-        // TODO promisify
-        getFieldsValue: <T>() => {
-            return unref(formRef)?.getFieldsValue() as T;
-        },
+    removeSchemaByFiled: async (field) => {
+      unref(formRef)?.removeSchemaByFiled(field as any)
+    },
 
-        setFieldsValue: async (values) => {
-            const form = await getForm();
-            form.setFieldsValue(values as any);
-        },
+    // TODO promisify
+    getFieldsValue: <T>() => {
+      return unref(formRef)?.getFieldsValue() as T
+    },
 
-        appendSchemaByField: async (
-            schema: BasicForm.FormSchema,
-            prefixField?: string,
-            first?: boolean,
-        ) => {
-            const form = await getForm();
-            form.appendSchemaByField(schema, prefixField, first);
-        },
+    setFieldsValue: async (values) => {
+      const form = await getForm()
+      form.setFieldsValue(values as any)
+    },
 
-        submit: async (): Promise<any> => {
-            const form = await getForm();
-            return form.submit();
-        },
+    appendSchemaByField: async (
+      schema: BasicForm.FormSchema,
+      prefixField?: string,
+      first?: boolean,
+    ) => {
+      const form = await getForm()
+      form.appendSchemaByField(schema, prefixField, first)
+    },
 
-        validate: async (): Promise<any> => {
-            const form = await getForm();
-            return form.validate();
-        },
-    };
+    submit: async (): Promise<any> => {
+      const form = await getForm()
+      return form.submit()
+    },
 
+    validate: async (): Promise<any> => {
+      const form = await getForm()
+      return form.validate()
+    },
+  }
 
-    return [register, methods]
+  return [register, methods]
 }

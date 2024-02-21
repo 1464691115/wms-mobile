@@ -1,8 +1,10 @@
 import routerList, { tabBarList } from '@/routes'
+import { queryParamsStr } from '@/utils'
 
 type optParams = UniNamespace.NavigateToOptions &
   Pick<UniNamespace.SwitchTabOptions, 'url'> & {
     url?: string
+    query?: Recordable
     /** 跳转方式 */
     toType?:
       | 'switchTab'
@@ -16,6 +18,11 @@ function to(opt: optParams, isRefresh = false) {
   if (!opt.url && isRefresh) {
     opt.url = '/' + (getCurrentPages().slice(-1)?.[0]?.route || '')
     opt.animationType = 'none'
+  }
+
+  if (opt.query) {
+    if (opt.url.includes('?')) opt.url += queryParamsStr(opt.query).slice(1, -1)
+    else opt.url += queryParamsStr(opt.query)
   }
 
   if (
