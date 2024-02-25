@@ -48,8 +48,9 @@
         :autocomplete="inputProps.autocomplete || 'on'"
         :name="inputProps.name || ''"
         :readonly="inputProps.readonly || false"
-        :autofocus="inputProps.autofocus || false"
+        :focus="inputProps.focus || false"
         :style="inputProps.inputStyle"
+        :type="inputProps.type"
         @focus="isFocus = true"
         @blur="isFocus = false"
         @input="handleInput"
@@ -137,9 +138,10 @@ function handleInput(e) {
   emits('update:modelValue', event)
 }
 
-function handleConfirm() {
-  const event = props.modelValue || ''
-  emits('confirm', event)
+function handleConfirm(e) {
+  const val = e?.detail?.value || e?.target?.value
+  handleInput(e)
+  emits('confirm', val)
 }
 
 function handleSuffixIconClick(e) {

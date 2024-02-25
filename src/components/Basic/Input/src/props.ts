@@ -26,13 +26,16 @@ export const baseSInputProps = {
 
   inputStyle: Object as PropType<CSSProperties>,
 
+  /** 输入框类型 */
+  type: { type: String, default: 'text' },
+
   //TODO 原生属性
   maxlength: Number,
   minlength: Number,
   autocomplete: String as PropType<'on' | 'off'>,
   name: String,
   readonly: Boolean,
-  autofocus: Boolean,
+  focus: Boolean,
 }
 
 export type BaseSInputProps = ExtractPropTypes<typeof baseSInputProps>
