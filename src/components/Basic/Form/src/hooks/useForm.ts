@@ -1,5 +1,5 @@
 import { getDynamicProps } from '@/utils'
-import { nextTick, onUnmounted, ref, unref, watch } from 'vue'
+import { nextTick, ref, unref, watch } from 'vue'
 import { BaseFormPropsType } from '../props'
 import { BasicForm } from '../types'
 type DeepReadonly<T> = {
@@ -45,9 +45,6 @@ export function useForm<P extends PropsDeepReadonly>(
   }
 
   function register(methods) {
-    onUnmounted(() => {
-      formRef.value = null
-    })
     formRef.value = unref(methods)
 
     watch(
