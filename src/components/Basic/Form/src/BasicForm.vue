@@ -40,6 +40,7 @@
           }"
         >
           <view
+            v-if="item.label"
             class="label"
             :style="{
               width: Px(item.labelWidth || formProps.labelWidth || '100%'),
@@ -51,39 +52,42 @@
             {{ filterColon(item.colon || formProps.colon) }}
           </view>
           <view class="flex-1">
+            <!-- 小程序那边 不能用参数，暂时在使用处用 getFieldsValue -->
+            <slot v-if="item.slot" :name="item.slot" />
             <BasicInput
-              v-if="item.component == ComponentOptions.Input"
+              v-else-if="item.component == ComponentOptions.Input"
               v-model="formData[item.field]"
-              :placeholder="
-                item.componentProps?.placeholder ||
-                `请填写${filterLabel(item.label, item)}`
-              "
+              v-bind="readComponentPropsItem(item)"
               input-border
-              :custom-props="readComponentPropsItem(item) || {}"
+              :placeholder="readComponentPlaceholder(item)"
+              :custom-props="readComponentPropsItem(item)"
             />
 
-            <uni-easyinput
-              v-if="item.component == ComponentOptions.InputNumber"
+            <BasicInput
+              v-else-if="item.component == ComponentOptions.InputNumber"
               v-model="formData[item.field]"
+              v-bind="readComponentPropsItem(item)"
               type="number"
-              :placeholder="
-                item.componentProps?.placeholder ||
-                `请填写${filterLabel(item.label, item)}`
-              "
               input-border
-              :custom-props="readComponentPropsItem(item) || {}"
+              :placeholder="readComponentPlaceholder(item)"
+              :custom-props="readComponentPropsItem(item)"
+            />
+
+            <SelectorPicker
+              v-else-if="item.component == ComponentOptions.Select"
+              v-model:value="formData[item.field]"
+              v-bind="readComponentPropsItem(item)"
+              :place="readComponentPlaceholder(item)"
             />
 
             <uni-easyinput
               v-else-if="item.component == ComponentOptions.Textarea"
               v-model="formData[item.field]"
+              v-bind="readComponentPropsItem(item)"
               type="textarea"
               :maxlength="item.componentProps?.maxlength || -1"
-              :placeholder="
-                item.componentProps?.placeholder ||
-                `请填写${filterLabel(item.label, item)}`
-              "
               :auto-height="item.componentProps?.autoHeight"
+              :placeholder="readComponentPlaceholder(item)"
             />
 
             <uni-data-checkbox
@@ -95,11 +99,18 @@
             <uni-datetime-picker
               v-else-if="item.component == ComponentOptions.DateTime"
               v-bind="readComponentPropsItem(item)"
-              :value="formData[item.field]"
               rangeSeparator="~"
-              @change="
-                (e) => (formData[item.field] = isArray(e) ? e.join('~') : e)
-              "
+              v-model="formData[item.field]"
+              :placeholder="readComponentPlaceholder(item)"
+              @change="(e) => readComponentChange(item, e)"
+            />
+
+            <switch
+              v-else-if="item.component == ComponentOptions.Switch"
+              :checked="readComponentDefValue(item)"
+              :type="readComponentPropsItem(item)?.type"
+              :color="readComponentPropsItem(item)?.color ?? APP_PRESET_COLOR"
+              @change="(e) => readComponentChange(item, e)"
             />
           </view>
         </view>
@@ -145,6 +156,7 @@ import {
   onMounted,
   reactive,
   ref,
+  unref,
   watch,
 } from 'vue'
 import {
@@ -163,8 +175,16 @@ import {
 } from '@/utils/lib/s-view'
 import BasicInput from '../../Input/src/BasicInput.vue'
 import BasicButton from '../../Button/src/BasicButton.vue'
-import { isArray, isFunction, isObject, isString } from '@/utils/is'
+import { isArray, isFunction, isNumber, isObject, isString } from '@/utils/is'
 import { APP_PRESET_COLOR } from '@/settings/designSetting'
+import { dateUtil, DATE_TIME_FORMAT } from '@/utils/dateUtil'
+import SelectorPicker from '@/components/SelectorPicker.vue'
+
+defineOptions({
+  options: {
+    styleIsolation: 'shared',
+  },
+})
 
 onMounted(async () => {
   emits('register', formMethods)
@@ -260,7 +280,7 @@ const handleSubmit: BasicForm.FormMethodsType['submit'] = () => {
       formProps.submitFunc().finally(() => resolve(true))
     } else {
       try {
-        await formProps.submitApiFunc?.(formData)
+        await formProps.submitApiFunc?.(unref(formData))
         await showToast('操作成功')
         resolve(true)
       } catch (error) {
@@ -363,19 +383,26 @@ const resetSchema: BasicForm.FormMethodsType['resetSchema'] = (data) => {
 const validate: BasicForm.FormMethodsType['validate'] = () => {
   return new Promise((resolve, rej) => {
     const formData = formMethods.getFieldsValue()
+
     try {
       const self_props = formMethods.getProps()
       const self_params = self_props.schemas?.map((el) => {
-        if (!formData[el.field] && el.required) {
-          const msg = `请填写${el.label}`
-          throw msg
-        } else if (
-          el.rule &&
-          isString(formData[el.field]) &&
-          !RegExp(escapeRegExp(el.rule)).test(formData[el.field])
+        const self_data = formData[el.field]
+        if (
+          el.required &&
+          (self_data === '' || self_data === null || self_data === undefined)
         ) {
-          const msg = el.ruleMsg || `${el.label}格式有误，请检查`
+          console.log(self_data)
+          const msg = readComponentPlaceholder(el)
           throw msg
+        } else if (el.rule && isString(self_data)) {
+          const self_rule_test = isString(el.rule)
+            ? RegExp(escapeRegExp(el.rule)).test(self_data)
+            : el.rule?.test?.(self_data)
+          if (!self_rule_test) {
+            const msg = el.ruleMsg || `${el.label}格式有误，请检查`
+            throw msg
+          }
         }
         return { title: el.field, value: formData[el.field] || null }
       })
@@ -396,8 +423,13 @@ const validate: BasicForm.FormMethodsType['validate'] = () => {
   }
 }
 
-function readComponentPropsItem(item) {
-  const { component = '', componentProps = {} } = deepClone(item)
+/** 处理所有组件的属性，如果为函数则执行 */
+function readComponentPropsItem(item: BasicForm.FormSchema) {
+  const {
+    component = '',
+    componentProps = {},
+    dynamicDisabled,
+  } = deepClone(item)
 
   if (!componentProps) return {}
   if (!component) item.component = ComponentOptions.Input
@@ -410,6 +442,11 @@ function readComponentPropsItem(item) {
       componentProps.selectedColor =
         componentProps.selectedColor ?? APP_PRESET_COLOR
       break
+    case ComponentOptions.Select:
+      componentProps.list = (componentProps.options || []).map((el) =>
+        !isObject(el) ? { title: el, id: el } : el,
+      )
+      break
     case ComponentOptions.DateTime:
       break
     case ComponentOptions.Input:
@@ -417,13 +454,90 @@ function readComponentPropsItem(item) {
       break
   }
 
-  return isFunction(componentProps)
-    ? componentProps({
-        formModel: formData,
-        formActionType: formMethods,
-        schema: item,
-      })
-    : componentProps
+  if (dynamicDisabled !== undefined) componentProps.disabled = dynamicDisabled
+
+  return (
+    (isFunction(componentProps)
+      ? componentProps({
+          formModel: formData,
+          formActionType: formMethods,
+          schema: item,
+        })
+      : componentProps) || {}
+  )
+}
+
+/** 处理所有组件的占位符 */
+function readComponentPlaceholder(item: BasicForm.FormSchema) {
+  let defMsg = ''
+
+  switch (item.component) {
+    case ComponentOptions.DateTime:
+    case ComponentOptions.Select:
+    case ComponentOptions.GroupRadio:
+    case ComponentOptions.Switch:
+      defMsg = '请选择'
+      break
+    case ComponentOptions.Input:
+    case ComponentOptions.InputNumber:
+    case ComponentOptions.Textarea:
+    default:
+      defMsg = '请输入'
+      break
+  }
+
+  return (
+    item.componentProps?.placeholder ||
+    `${defMsg}${filterLabel(item.label, item)}`
+  )
+}
+
+/** 处理所有组件的更改回调函数 */
+function readComponentChange(item: BasicForm.FormSchema, e) {
+  const self_comp = readComponentPropsItem(item)
+  console.log(item, e, self_comp)
+
+  switch (item.component) {
+    case ComponentOptions.DateTime:
+      const self_format =
+        readComponentPropsItem(item)?.format || DATE_TIME_FORMAT
+      formData.value[item.field] = isArray(e)
+        ? e.map((el) => dateUtil(el).format(self_format)).join('~')
+        : dateUtil(e).format(self_format)
+      break
+    case ComponentOptions.Switch:
+      formData.value[item.field] = e.detail.value ?? ''
+      break
+    case ComponentOptions.Select:
+    case ComponentOptions.GroupRadio:
+      break
+    case ComponentOptions.Input:
+    case ComponentOptions.InputNumber:
+    case ComponentOptions.Textarea:
+    default:
+      break
+  }
+}
+
+/** 处理所有组件的默认值 */
+function readComponentDefValue(item: BasicForm.FormSchema) {
+  const self_comp = readComponentPropsItem(item)
+  let self_val = formData.value[item.field] ?? self_comp.defaultValue
+  console.log(item, self_comp)
+
+  switch (item.component) {
+    case ComponentOptions.Switch:
+      if (isString(self_val)) {
+        self_val = +self_val ? true : false
+      } else if (isNumber(self_val)) {
+        self_val = self_val <= 0 ? true : false
+      }
+      break
+    default:
+      break
+  }
+
+  return self_val
 }
 
 const formMethods: BasicForm.FormMethodsType = {
@@ -459,9 +573,17 @@ defineExpose({
   }
 }
 
+::v-deep .input-placeholder {
+  color: #c0bdc1;
+}
+
 .basic-form {
   width: 100%;
   height: auto;
+
+  ::v-deep .uni-file-picker {
+    padding: 5px;
+  }
 
   .basic-form-content {
     min-height: 100rpx;
@@ -480,12 +602,12 @@ defineExpose({
       margin-bottom: 20rpx;
       width: 100%;
 
-      &:last-child {
-        margin-bottom: 0rpx;
-      }
+      //&:last-child {
+      // margin-bottom: 0rpx;
+      //}
 
       .label {
-        @include font(32rpx, 40px, #333, 400);
+        @include font(28rpx, 40px, #333, 400);
         white-space: nowrap;
       }
     }

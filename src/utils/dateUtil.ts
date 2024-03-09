@@ -5,8 +5,8 @@ import dayjs from 'dayjs'
 // 时间插件
 import duration from 'dayjs/plugin/duration'
 
-const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss'
-const DATE_FORMAT = 'YYYY-MM-DD'
+export const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss'
+export const DATE_FORMAT = 'YYYY-MM-DD'
 
 export function formatToDateTime(
   date: dayjs.Dayjs | number | undefined = undefined,

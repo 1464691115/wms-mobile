@@ -10,20 +10,32 @@
     >
       <view class="con-wrap" />
     </picker>
-    <view class="full" :class="{ pad: props.isPadding }">
+    <view
+      class="select-picker-con full align-center"
+      :class="{ pad: props.isPadding }"
+    >
       <slot
         name="default"
         :index="index"
         :value="props.value"
         :item="index !== null && options[index]"
       >
-        <view>
+        <view
+          class="select-picker-txt"
+          :class="
+            (typeof index !== 'number' || index === -1) &&
+            'selector-picker-place'
+          "
+        >
           {{ resultRenderValue(options) }}
         </view>
       </slot>
-      <view class="full align-center" v-if="isRightIcon === true">
-        <Icon :icon="ICON_UNICODE.ARROW_RIGHT_1" :size="80" color="#656565" />
-      </view>
+      <Icon
+        v-if="isRightIcon === true"
+        :icon="ICON_UNICODE.ARROW_RIGHT_1"
+        :size="44"
+        color="#c0bdc1"
+      />
     </view>
   </view>
 </template>
@@ -53,7 +65,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits<{
-  (e: 'change', { index, item }): void
+  (e: 'change', { index, item, value }): void
   (e: 'update:value', item): void
 }>()
 
@@ -85,13 +97,12 @@ const defineRangeValue = computed(() =>
 function bindTimeChange(e) {
   const _i = e.detail.value
 
-  emits('change', { index: _i, item: options.value[_i] })
-  emits(
-    'update:value',
-    defineRangeValue.value
-      ? options.value[_i][defineRangeValue.value]
-      : options.value[_i],
-  )
+  const _val = defineRangeValue.value
+    ? options.value[_i][defineRangeValue.value]
+    : options.value[_i]
+
+  emits('change', { index: _i, item: options.value[_i], value: _val })
+  emits('update:value', _val)
 }
 
 function resultRenderValue(options) {
@@ -125,6 +136,10 @@ function resultRenderValue(options) {
   @include align-center;
   position: relative;
   flex: 1;
+
+  .selector-picker-place {
+    color: #c0bdc1;
+  }
 
   .pad {
     padding: 0 20rpx;

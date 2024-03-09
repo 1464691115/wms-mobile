@@ -9,6 +9,7 @@ type DeepReadonly<T> = {
     | number
     | undefined
     | null
+    | Function
     ? T[K]
     : DeepReadonly<T[K]>
 }
@@ -47,18 +48,29 @@ export function useForm<P extends PropsDeepReadonly>(
   function register(methods) {
     formRef.value = unref(methods)
 
+    nextTick().then(async () => {
+      for (let i = tasksList.length - 1; i >= 0; i--) {
+        const element = tasksList[i]
+        await element()
+        tasksList.splice(i, 1)
+      }
+    })
+
     watch(
       () => props,
       () => {
         if (props) {
           methods.setProps(getDynamicProps(props))
 
-          nextTick().then(async () => {
-            for (let i = tasksList.length - 1; i >= 0; i--) {
-              const element = tasksList[i]
-              await element()
-            }
-          })
+          methods.setFieldsValue(
+            props.schemas?.reduce((pre, el) => {
+              const self_data = methods.getFieldsValue()
+              if (el.defaultValue && !self_data[el.field]) {
+                pre[el.field] = el.defaultValue
+              }
+              return pre
+            }, {}),
+          )
         }
       },
       {
