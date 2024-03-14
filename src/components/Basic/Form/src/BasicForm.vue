@@ -75,9 +75,10 @@
 
             <SelectorPicker
               v-else-if="item.component == ComponentOptions.Select"
-              v-model:value="formData[item.field]"
+              :value="readComponentDefValue(item)"
               v-bind="readComponentPropsItem(item)"
               :place="readComponentPlaceholder(item)"
+              @change="(e) => readComponentChange(item, e)"
             />
 
             <uni-easyinput
@@ -509,6 +510,8 @@ function readComponentChange(item: BasicForm.FormSchema, e) {
       formData.value[item.field] = e.detail.value ?? ''
       break
     case ComponentOptions.Select:
+      formData.value[item.field] = e.value ?? ''
+      break
     case ComponentOptions.GroupRadio:
       break
     case ComponentOptions.Input:
@@ -522,8 +525,7 @@ function readComponentChange(item: BasicForm.FormSchema, e) {
 /** 处理所有组件的默认值 */
 function readComponentDefValue(item: BasicForm.FormSchema) {
   const self_comp = readComponentPropsItem(item)
-  let self_val = formData.value[item.field] ?? self_comp.defaultValue
-  console.log(item, self_comp)
+  let self_val = formData.value[item.field]
 
   switch (item.component) {
     case ComponentOptions.Switch:
@@ -532,6 +534,8 @@ function readComponentDefValue(item: BasicForm.FormSchema) {
       } else if (isNumber(self_val)) {
         self_val = self_val <= 0 ? true : false
       }
+      break
+    case ComponentOptions.Select:
       break
     default:
       break

@@ -61,16 +61,6 @@ export function useForm<P extends PropsDeepReadonly>(
       () => {
         if (props) {
           methods.setProps(getDynamicProps(props))
-
-          methods.setFieldsValue(
-            props.schemas?.reduce((pre, el) => {
-              const self_data = methods.getFieldsValue()
-              if (el.defaultValue && !self_data[el.field]) {
-                pre[el.field] = el.defaultValue
-              }
-              return pre
-            }, {}),
-          )
         }
       },
       {
@@ -84,6 +74,18 @@ export function useForm<P extends PropsDeepReadonly>(
     setProps: async (formProps: Partial<BaseFormPropsType>) => {
       const form = await getForm()
       form.setProps(formProps)
+
+      if (formProps.schemas) {
+        form.setFieldsValue(
+          formProps.schemas.reduce((pre, el) => {
+            const self_data = form.getFieldsValue()
+            if (el.defaultValue && !self_data[el.field]) {
+              pre[el.field] = el.defaultValue
+            }
+            return pre
+          }, {}),
+        )
+      }
     },
 
     getProps: () => {

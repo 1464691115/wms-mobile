@@ -42,6 +42,8 @@ export namespace BasicForm {
 
     label?: string | ((schemaItem: Exclude<FormSchema, 'label'>) => string)
 
+    defaultValue?: string | object
+
     required?: boolean
     /** 判断当前组件是否禁用 */
     dynamicDisabled?: boolean
