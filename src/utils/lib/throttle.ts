@@ -1,4 +1,4 @@
-let timer: NodeJS.Timeout = 0 as any;
+let timer: NodeJS.Timeout = 0 as any
 let flag: boolean = false
 /**
  * 节流原理：在一定时间内，只能触发一次
@@ -9,23 +9,23 @@ let flag: boolean = false
  * @return null
  */
 function throttle(func, wait = 500, immediate = true) {
-    if (immediate) {
-        if (!flag) {
-            flag = true
-            // 如果是立即执行，则在wait毫秒内开始时执行
-            typeof func === 'function' && func()
-            clearTimeout(timer)
-            timer = setTimeout(() => {
-                flag = false
-            }, wait)
-        }
-    } else if (!flag) {
-        flag = true
-        // 如果是非立即执行，则在wait毫秒内的结束处执行
-        timer = setTimeout(() => {
-            flag = false
-            typeof func === 'function' && func()
-        }, wait)
+  if (immediate) {
+    if (!flag) {
+      flag = true
+      // 如果是立即执行，则在wait毫秒内开始时执行
+      typeof func === 'function' && func()
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        flag = false
+      }, wait)
     }
+  } else if (!flag) {
+    flag = true
+    // 如果是非立即执行，则在wait毫秒内的结束处执行
+    timer = setTimeout(() => {
+      flag = false
+      typeof func === 'function' && func()
+    }, wait)
+  }
 }
 export default throttle

@@ -1,15 +1,27 @@
 import { createSSRApp } from 'vue'
 import App from './App.vue'
-import store from '@/store';
-import * as globalUtils from '@/utils/global';
-import * as globalEnum from '@/enums';
+import { setupStore } from '@/store'
+import globalUtil from '@/utils/global/plugin'
+import globalIcon from '@/components/Basic/Icon'
+import NavBarCustom from './components/NavBarCustom'
 
 export function createApp() {
-    const app = createSSRApp(App).use(store)
-    app.mixin({ methods: globalUtils, data() { return { ...globalEnum } } })
+  const app = createSSRApp(App)
 
-    return {
-        app
-    }
+  // Configure store
+  // 配置 store
+  setupStore(app)
+
+  // 全局方法
+  app.use(globalUtil)
+
+  // 图标枚举
+  app.use(globalIcon)
+
+  // 全局顶部弹框
+  app.use(NavBarCustom)
+
+  return {
+    app,
+  }
 }
-

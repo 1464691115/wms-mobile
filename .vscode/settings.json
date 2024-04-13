@@ -1,34 +1,36 @@
 {
-    "cSpell.words": [
-        "dcloudio",
-        "diseaseinvestigation",
-        "ecog",
-        "loadmore",
-        "miniprogram",
-        "mutiple",
-        "relat",
-        "reportname",
-        "scrolltoupper",
-        "Subimt",
-        "tabbar",
-        "tinyapp",
-        "usingtutorials",
-        "vant",
-        "vuex",
-        "waitfor",
-        "wxfile"
-    ],
-    "path-intellisense.mappings": {
-        "@": "${workspaceRoot}/src/",
-        "@config": "${workspaceRoot}/config/",
-        "pages": "${workspaceRoot}/src/pages/",
-        "/pages": "${workspaceRoot}/src/pages/",
-        "typings": "${workspaceRoot}/typings/",
-    },
-    "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
-    "editor.formatOnType": false,
-    "[vue]": {
-        "editor.formatOnSave": false
-    },
-    "editor.snippetSuggestions": "bottom"
+  "cSpell.words": [
+    "dcloudio",
+    "diseaseinvestigation",
+    "ecog",
+    "loadmore",
+    "miniprogram",
+    "mutiple",
+    "Parens",
+    "relat",
+    "reportname",
+    "scrolltoupper",
+    "Subimt",
+    "tabbar",
+    "tinyapp",
+    "usingtutorials",
+    "vant",
+    "vuex",
+    "waitfor",
+    "wxfile"
+  ],
+  "path-intellisense.mappings": {
+    "@": "${workspaceRoot}/src/",
+    "@config": "${workspaceRoot}/config/",
+    "pages": "${workspaceRoot}/src/pages/",
+    "/pages": "${workspaceRoot}/src/pages/",
+    "typings": "${workspaceRoot}/typings/"
+  },
+  "vue3snippets.enable-compile-vue-file-on-did-save-code": false,
+  "editor.formatOnType": false,
+  "[vue]": {
+    "editor.formatOnSave": false
+  },
+  "editor.snippetSuggestions": "bottom",
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

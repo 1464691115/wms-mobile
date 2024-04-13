@@ -1,0 +1,7 @@
+# 忽略目录或文件
+dist
+coverage
+node_modules
+
+# 忽略所有 html 文件
+*.html

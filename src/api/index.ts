@@ -1,69 +1,149 @@
-import { ApiErrorMsg } from "./instanceof";
+import { AxiosTransformConfig } from './axiosTransform'
+import { ResultEnum } from '@/enums/httpEnum'
+import { getToken } from '@/utils/auth'
+import { Persistent } from '@/utils/cache/persistent'
+import { USER_ID_KEY } from '@/enums/cacheEnum'
+import { VAxios } from './Axios'
+import { isString } from '@/utils/is'
+import { getAppEnvConfig } from '@/utils/env'
+import { showToast } from '@/utils/lib/s-view'
+import { UserApi } from '@/service/sys/ApiEnum'
+import { initStore } from '@/store'
+import { useUserStore } from '@/store/modules/user'
+import { UploadApi } from '@/service/sys/upload'
 
+const whiteApiUrl: string[] = [UserApi.LOGIN, UploadApi.UPLOAD_IMG]
 
-function getUrl() {
-    //#ifdef MP-WEIXIN
-    let version = __wxConfig.envVersion;
-    switch (version) {
-        // 开发
-        case 'develop':
-            return 'https://localhost:8080/';
-        //  体验
-        case 'trial':
-            return 'https://localhost:8080/';
-        //  线上
-        case 'release':
-            return 'https://localhost:8080/';
-        default:
-            return 'https://localhost:8080/';
+/** 是否正在处理401问题，如果是，跳过其他重新登录 */
+let handle_401__ing = false
+
+/**
+ * @description: 数据处理，方便区分多种处理方式
+ */
+const transform = AxiosTransformConfig({
+  /**
+   * @description: 处理响应数据。如果数据不是预期格式，可直接抛出错误
+   */
+  transformResponseHook: (res, opt) => {
+    const { resetState: userResetState } = useUserStore()
+    const data = typeof res.data == 'string' ? JSON.parse(res.data) : res.data
+
+    //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
+    const { returnCode, code, data: _data, msg } = data
+
+    // 这里逻辑可以根据项目进行修改
+    if (returnCode) {
+      const hasSuccess =
+        data &&
+        Reflect.has(data, 'returnCode') &&
+        [ResultEnum.SUCCESS].includes(returnCode)
+      if (hasSuccess) return data
     }
-    //#endif
-    return 'https://localhost:8080/'
-}
 
-function request<P = string>(url: UniApp.RequestOptions['url'], data: any = {}, method: UniApp.RequestOptions['method'] = "POST", header: UniApp.RequestOptions['header'] = {}) {
-    // 定义公共的url
-    return new Promise<P extends listRequestResult ? P : globalRequestResult<P>>((resolve, reject) => {
+    console.log(`----------------------------------------------`)
+    console.log(`_________________ ${opt.url} _________________`)
+    console.table(opt)
+    console.table(data)
+    console.log(`_________________ end _________________`)
+    console.log(`----------------------------------------------`)
 
-        const _data = {
-            //TODO kesen: 2022-05-21  如果data 里有上面这些数据就覆盖掉
-            ...data,
+    // 在此处根据自己项目的实际情况对不同的code执行不同的操作
+    // 如果不希望中断当前请求，请return数据，否则直接抛出异常即可
+    let timeoutMsg = JSON.stringify(opt)
+    switch (code) {
+      case ResultEnum.FAIL:
+        timeoutMsg = _data
+        break
+      case ResultEnum.BAD:
+        timeoutMsg = msg
+        break
+      case ResultEnum.AUTH:
+        if (!handle_401__ing) {
+          handle_401__ing = true
+          userResetState()
+          initStore().finally(() => {
+            handle_401__ing = false
+          })
         }
+        timeoutMsg = _data
+        break
+      default:
+        if (msg) timeoutMsg = msg
+    }
 
-        uni.request({
-            method,
-            data: _data,
-            timeout: 60000,
-            header: {
-                // "content-type": 'application/x-www-form-urlenreturnCoded',
-                ...(header || {})
-            },
-            url: getUrl() + url,
+    throw timeoutMsg
+  },
+  /**
+   * @description: 请求拦截器处理
+   */
+  requestInterceptors: (options) => {
+    const { baseUrl } = options
+    const { VITE_GLOB_API_URL } = getAppEnvConfig()
 
-            success: async result => {
-                // @ts-ignore
-                const res = result as { data: globalRequestResult }
+    // 请求之前处理config
+    const token = getToken()
+    const uid = Persistent.getLocal(USER_ID_KEY)
 
-                //TODO kesen: 2022-05-21  后端传过来的这个 code不固定，转换一下吧
-                switch (+res.data.returnCode) {
-                    case 500:
-                        return reject(new ApiErrorMsg(res.data.msg))
-                    case 400:
-                        return reject(new ApiErrorMsg(res.data.msg))
-                    default:
-                        break;
-                }
+    if (!options.header) options.header = {}
+    try {
+      // 有请求地址并且不在白名单中
+      if (options.url && !whiteApiUrl.some((el) => options.url?.includes(el))) {
+        if (!token) throw '用户信息已失效，请重新登录'
+        if (!uid) throw '请登录注册后使用'
+      }
 
-                resolve(res.data as any);
-            },
-            fail: err => {
-                console.log('请求失败', err);
-                reject(err);
-            }
-        });
-    });
-};
+      // jwt token
+      options.header['Accept-LemonpieToken'] = token
+      options.header['Accept-LemonpieUid'] = uid
+    } catch (error) {
+      if (!handle_401__ing) {
+        handle_401__ing = true
+        showToast(typeof error === 'string' ? error : '登录失效').then(
+          async () => {
+            initStore().finally(() => {
+              handle_401__ing = false
+            })
+          },
+        )
+      }
 
+      throw error
+    }
 
+    // 处理接口地址公共前缀
+    if (baseUrl && isString(baseUrl)) {
+      options.url = `${baseUrl}${options.url}`
+    }
+    options.url = VITE_GLOB_API_URL + options.url
 
-export default request
+    if (!options.header) options.header = {}
+
+    return options
+  },
+
+  /**
+   * @description: 响应拦截器处理
+   */
+  responseInterceptors: (res) => {
+    return res
+  },
+
+  /**
+   * @description: 请求失败处理
+   */
+  requestCatchHook: (e) => {
+    const msg: string = e.errMsg || ''
+
+    throw new Error(msg as unknown as string)
+  },
+})
+
+export const defHttp = new VAxios({
+  transform,
+  requestOptions: {
+    url: '',
+    baseUrl: '/api',
+    timeout: 60000,
+    method: 'GET',
+  },
+})

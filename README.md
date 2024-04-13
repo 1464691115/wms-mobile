@@ -21,7 +21,7 @@ yarn start
 ### H5启动
 
 ```
-// package.json 的 start和start:w 命令为 
+// package.json 的 start和start:w 命令为
 //  "start": "yarn file off && yarn run dev:h5"
 //  "start:w": "start yarn file off --watch && yarn run dev:h5"
 yarn start
@@ -43,6 +43,6 @@ yarn build
 2. 字符转换工具 统一封装在 **src/utils/global/index.ts** 文件中
 3. 接口 统一封装在 **src/service** 文件中
 4. 快捷生成页面命令
-    ``` 
-    yarn sview page [fileName] 
-    ```
+   ```
+   yarn sview page [fileName]
+   ```

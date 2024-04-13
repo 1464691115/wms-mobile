@@ -4,6 +4,4 @@ export * from './src/types';
 
 export { useForm } from './src/hooks/useForm';
 
-export { default as ApiSelect } from './src/components/ApiSelect.vue';
-
 export { BasicForm };
