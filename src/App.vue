@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onLaunch } from '@dcloudio/uni-app'
-import { getAppEnvConfig } from './utils/env';
 import { handleUpdateManager } from './utils/update'
 
 onLaunch(async function () {
@@ -8,25 +7,8 @@ onLaunch(async function () {
 
   handleUpdateManager()
 
-  wx.setInnerAudioOption({
-    obeyMuteSwitch: false,
-    success: function () {
-      console.log('开启静音模式下播放音乐的功能')
-    },
-
-    fail: function () {
-      console.log('静音设置失败')
-    },
-  })
-
-  uni.loadFontFace({
-    global: true,
-    family: 'SH',
-    source: `url("${VITE_GLOB_FONT_URL}")`,
-  })
 })
 
-const { VITE_GLOB_FONT_URL } = getAppEnvConfig()
 
 </script>
 

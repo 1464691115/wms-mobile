@@ -149,10 +149,6 @@ export const useUserStore = defineStore({
           const res = await this.login()
           if (!res?.nickName) throw '该用户未注册'
 
-          to({
-            url: ROUTES_URL.TOP_SCREEN + queryParamsStr({ redirectUrl }),
-            toType: 'reLaunch',
-          })
         } catch (error) {
           toLogin(redirectUrl)
         }
@@ -161,5 +157,5 @@ export const useUserStore = defineStore({
   },
 })
 
-function toLogin(...arg) {}
-function toHome(...arg) {}
+function toLogin(...arg) { }
+function toHome(...arg) { }

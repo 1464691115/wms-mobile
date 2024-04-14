@@ -53,6 +53,8 @@ function handleClickBack() {
 }
 </script>
 <template>
+ <view class="class1">
+   1
   <uni-nav-bar v-if="!$slots.default" :border="false" :status-bar="true" height="40px" v-bind="navBarProps">
     <template v-if="props.isLeft" #left>
       <Icon :icon="ICON_UNICODE.ARROW_LEFT" :size="Px(50)" :color="navBarProps.leftColor"
@@ -69,6 +71,7 @@ function handleClickBack() {
       <slot name="default" />
     </template>
   </uni-nav-bar>
+ </view>
 </template>
 
 <style lang="scss" scoped>
