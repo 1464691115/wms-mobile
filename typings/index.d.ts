@@ -27,7 +27,9 @@ declare let __wxConfig: {
   envVersion: 'develop' | 'trial' | 'release'
 }
 
+/**  取对象的值 转为 联合类型 */
 declare type valueOfU<T> = UnionToIntersection<T[keyof T]>
+/**  取对象的值 转为 交叉类型 */
 declare type valueOfI<T> = T[keyof T]
 declare type getChildrenProps<T> = InstanceType<T>['$props']
 
