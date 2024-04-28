@@ -1,5 +1,6 @@
 <template>
-    <view class="home-menu-wrap justify-center">
+    <view class="home-menu-wrap">
+
         <view v-for="item in menuList" :key="item.id" class="home-menu-item flex-col align-center" @click="item.to">
             <view class="home-menu-item_icon flex-col align-center">
                 <image class="shadow full" :src="imgPrefix(item.pic)" />
@@ -22,47 +23,64 @@ const menuList = ref([
     {
         id: 1,
         pic: '/static/images/home/home_menu_1.png',
-        title: '精彩课程',
+        title: '新增货品',
     },
     {
         id: 2,
         pic: '/static/images/home/home_menu_2.png',
-        title: '听力学习',
+        title: '扫一扫',
     },
     {
         id: 3,
         pic: '/static/images/home/home_menu_3.png',
-        title: '单词学习',
+        title: '单据列表',
     },
     {
         id: 4,
         pic: '/static/images/home/home_menu_4.png',
-        title: '公告',
+        title: '入库',
+    },
+    {
+        id: 5,
+        pic: '/static/images/home/home_menu_1.png',
+        title: '出库',
+    },
+    {
+        id: 6,
+        pic: '/static/images/home/home_menu_2.png',
+        title: '盘点',
+    },
+    {
+        id: 7,
+        pic: '/static/images/home/home_menu_3.png',
+        title: '调拨',
+    },
+    {
+        id: 8,
+        pic: '/static/images/home/home_menu_4.png',
+        title: '库存查询',
     },
 ])
 </script>
 
 <style lang='scss' scoped>
-$_g: 43rpx;
+$_g: 26rpx;
 
 .home-menu-wrap {
-    @include wh(100%, 247rpx);
-    padding: 53rpx 0;
-    margin: 0 $_g;
-
+    @include houseGrid(4, 28rpx, 13rpx, home-menu-item);
+    padding-bottom: 30rpx;
 }
 
 .home-menu-item {
-    $_w: 88rpx;
-
-    margin: 0 $_g;
-    width: $_w;
+    margin-top: 40rpx !important;
 
     .home-menu-item_icon {
-        @include wh(100%, $_w);
+        @include whSquare(130rpx);
         @include border(none, 33rpx);
 
-        // .img {}
+        .img {
+            background-color: #000
+        }
 
         .shadow {
             background: inherit;
@@ -77,7 +95,7 @@ $_g: 43rpx;
 
     .span {
         @include font(28rpx, 28rpx, #1A2952, 600);
-        margin-top: 26rpx;
+        margin-top: 20rpx;
         white-space: nowrap;
         text-align: center;
     }

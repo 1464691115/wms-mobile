@@ -5,7 +5,14 @@
             <InventoryAlerts />
         </view>
 
-        <HomeMenu />
+
+
+
+        <view class="home-menu">
+            <uni-section title="库存管理" type="line" titleFontSize="18px" />
+            <HomeMenu />
+        </view>
+
     </view>
 </template>
 
@@ -19,6 +26,7 @@ import ToDosNum from './components/ToDosNum.vue';
 
 <style lang='scss' scoped>
 .home-wrap {
+    background-color: #F2F3F7;
 
     .home-plant-wrap {
         position: relative;
@@ -35,6 +43,19 @@ import ToDosNum from './components/ToDosNum.vue';
             width: 3rpx;
             height: 80rpx;
             background-color: #fff;
+        }
+    }
+
+
+    .home-menu {
+        padding: 20rpx 0 0;
+        width: 100%;
+
+        background-color: #fff;
+
+        ::v-deep .uni-section-header {
+            padding-left: 28rpx;
+            padding-bottom: 0;
         }
     }
 }
