@@ -2,6 +2,7 @@ import { APP_PRESET_COLOR } from './../settings/designSetting';
 // TODO 尾部可以不删除默认导入带的.vue，编译路由的时候会遍历删除 (别的地方跳转用到的话必须去掉)
 export enum ROUTES_URL {
   HOME = '/pages/home/index',
+  NEW_PRODUCTS = '/pages/new-products/index'
 }
 
 /** 测试使用，只在开发环境生效 */
@@ -9,8 +10,8 @@ export const testUrl =
   process.env.NODE_ENV === 'development'
     ? {}
     : {
-        defaultPage: '/pages/test/defaultPage',
-      }
+      defaultPage: '/pages/test/defaultPage',
+    }
 
 /** 导航栏 灰底的页面样式 */
 function navigationBlock(title?: string): routesItem['style']
@@ -31,11 +32,17 @@ const routes: routesType = [
       navigationBarTitleText: '首页',
     }),
   },
+  {
+    path: ROUTES_URL.NEW_PRODUCTS,
+    style: navigationBlock({
+      navigationBarTitleText: '新增货品',
+    }),
+  },
 ]
 
 export const tabBarList = [].map((el) => ({
-  ...el,
-  pagePath: el.pagePath.slice(1),
+  // ...el,
+  // pagePath: el.pagePath.slice(1),
 }))
 
 export default routes

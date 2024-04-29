@@ -113,6 +113,13 @@
               :color="readComponentPropsItem(item)?.color ?? APP_PRESET_COLOR"
               @change="(e) => readComponentChange(item, e)"
             />
+
+            <uni-file-picker
+              v-else-if="item.component == ComponentOptions.Upload"
+              v-bind="readComponentPropsItem(item)"
+              v-model="formData[item.field]"
+              @success="(e) => readComponentChange(item, e)"
+            />
           </view>
         </view>
       </template>

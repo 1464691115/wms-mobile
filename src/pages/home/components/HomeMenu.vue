@@ -1,9 +1,10 @@
 <template>
     <view class="home-menu-wrap">
 
-        <view v-for="item in menuList" :key="item.id" class="home-menu-item flex-col align-center" @click="item.to">
+        <view v-for="item in menuList" :key="item.id" class="home-menu-item flex-col align-center"
+            @tap="item.click?.()">
             <view class="home-menu-item_icon flex-col align-center">
-                <image class="shadow full" :src="imgPrefix(item.pic)" />
+                <!-- <image class="shadow full" :src="imgPrefix(item.pic)" /> -->
                 <image class="img full" :src="imgPrefix(item.pic)" />
             </view>
 
@@ -13,6 +14,8 @@
 </template>
 
 <script lang='ts' setup>
+import { ROUTES_URL } from '@/routes';
+import to from '@/routes/to';
 import { onMounted, ref } from 'vue';
 
 
@@ -24,6 +27,11 @@ const menuList = ref([
         id: 1,
         pic: '/static/images/home/home_menu_1.png',
         title: '新增货品',
+        click() {
+            to({
+                url: ROUTES_URL.NEW_PRODUCTS
+            })
+        }
     },
     {
         id: 2,
@@ -82,15 +90,15 @@ $_g: 26rpx;
             background-color: #000
         }
 
-        .shadow {
-            background: inherit;
-            position: absolute;
-            transform: translateY(50rpx);
-            height: 50%;
-            width: 67%;
-            filter: blur(14rpx);
-            z-index: 0;
-        }
+        // .shadow {
+        //     background: inherit;
+        //     position: absolute;
+        //     transform: translateY(50rpx);
+        //     height: 50%;
+        //     width: 67%;
+        //     filter: blur(14rpx);
+        //     z-index: 0;
+        // }
     }
 
     .span {
