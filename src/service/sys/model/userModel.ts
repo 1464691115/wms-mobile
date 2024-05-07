@@ -2,7 +2,7 @@ import { UserInfo } from '#/store'
 
 export interface LoginParams {
   phone?: string
-  code?: string
+  password?: string
   nickName?: string
   avatarUrl?: string
 }

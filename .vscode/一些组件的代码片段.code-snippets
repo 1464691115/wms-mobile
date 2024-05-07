@@ -85,20 +85,4 @@
     ],
     "description": "vue文件的默认模板"
   },
-  "接口 try catch loading 模板": {
-    "scope": "javascript,typescript,vue,tsx",
-    "prefix": "apiTryLoading",
-    "body": [
-      "const loading = useLoading()",
-      "try {",
-      "\t$1",
-      "\tloading()",
-      "} catch (error) {",
-      "\tif (error instanceof ApiErrorMsg) await showToast(error.msg);",
-      "\tconsole.log(error)",
-      "\tloading()",
-      "}"
-    ],
-    "description": "vue文件的默认模板"
-  }
 }

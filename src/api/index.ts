@@ -32,11 +32,11 @@ const transform = AxiosTransformConfig({
     const { returnCode, code, data: _data, msg } = data
 
     // 这里逻辑可以根据项目进行修改
-    if (returnCode) {
+    if (code) {
       const hasSuccess =
         data &&
-        Reflect.has(data, 'returnCode') &&
-        [ResultEnum.SUCCESS].includes(returnCode)
+        Reflect.has(data, 'code') &&
+        [ResultEnum.SUCCESS].includes(code)
       if (hasSuccess) return data
     }
 
@@ -93,7 +93,8 @@ const transform = AxiosTransformConfig({
       }
 
       // jwt token
-      options.header['Accept-LemonpieToken'] = token
+      options.header['Authorization'] = token
+      options.header['Accept'] = 'application/json, text/plain'
       options.header['Accept-LemonpieUid'] = uid
     } catch (error) {
       if (!handle_401__ing) {

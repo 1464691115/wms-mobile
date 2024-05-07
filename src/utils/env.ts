@@ -41,11 +41,10 @@ export function getAppEnvConfig() {
   const _config = {
     VITE_GLOB_APP_TITLE: pkg.description,
     /** 全局接口前缀 */
-    VITE_GLOB_API_URL: 'https://xxx.allyesok.com',
+    VITE_GLOB_API_URL: window.location.origin,
     /** 全局图片前缀 */
-    VITE_GLOB_IMG_PREFIX: 'https://xxx.allyesok.com',
+    VITE_GLOB_IMG_PREFIX: 'http://localhost',
     VITE_GLOB_APP_SHORT_NAME: pkg.name,
-    VITE_GLOB_FONT_URL: '/static/font/SourceHanSansSC-Regular.otf',
   }
 
   let version = ''

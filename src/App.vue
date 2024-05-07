@@ -36,7 +36,7 @@ image {
 
 page {
   width: 100vw;
-  height: 100vh;
+  height: 100%;
 
   background-color: #f8f8f8;
 }

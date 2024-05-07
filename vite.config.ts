@@ -9,6 +9,13 @@ export default defineConfig({
   build: {
     sourcemap: true,
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://wmsapi.lkstree.cloud',
+      }
+    }
+  },
   plugins: [uni(), VueSetupExtend(), DefineOptions()],
   resolve: {
     alias: {

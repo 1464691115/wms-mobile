@@ -4,7 +4,7 @@
 export enum ResultEnum {
   SUCCESS = 200,
   ERROR = 1,
-  AUTH = 401,
+  AUTH = 110,
   FAIL = 50000,
   BAD = 400,
 }

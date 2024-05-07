@@ -531,7 +531,7 @@ function readComponentChange(item: BasicForm.FormSchema, e) {
 
 /** 处理所有组件的默认值 */
 function readComponentDefValue(item: BasicForm.FormSchema) {
-  const self_comp = readComponentPropsItem(item)
+  // const self_comp = readComponentPropsItem(item)
   let self_val = formData.value[item.field]
 
   switch (item.component) {
