@@ -7,7 +7,6 @@
     :thirdProps="thirdProps"
     wxProfile
     @login="handleLogin"
-    @remove="remove"
     @third-login="thirdLogin"
     @wx-login="wxLogin"
   >
@@ -27,11 +26,24 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import hicLogin from '@/uni_modules/hic-login/components/hic-login/hic-login.vue'
-import { loginApi } from '@/service/sys/user'
+import { useUserStore } from '@/store/modules/user';
+import { toHome } from '@/routes/toFn';
+
 
 export default defineComponent({
   components: { hicLogin },
   setup() {
+    const {login} = useUserStore()
+
+
+    async function handleLogin(form) {
+      // 表单验证
+      console.log(form);
+       // {loginName: '13xxx81', password: '123'}
+      await login({ userName: form.loginName, password: form.password })
+      toHome()
+    }
+
     return {
       props: { account: 'loginName', password: 'password' },
       history: [],
@@ -43,14 +55,11 @@ export default defineComponent({
           color: 'lines-green',
         },
       ],
+      handleLogin
     }
   },
   methods: {
-    handleLogin(form) {
-      // 表单验证
-      console.log(form) // {loginName: '13xxx81', password: '123'}
-      loginApi({ phone: form.loginName, password: form.password })
-    },
+   
     remove(item, index) {
       uni.showModal({
         title: '提示',

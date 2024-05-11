@@ -52,30 +52,30 @@ export const useUserStore = defineStore({
       this.setUserInfo(null as any)
     },
     async login(params: LoginParams = {}): Promise<GetUserInfoModel | null> {
-      const codeRes = await getAuthCode()
-      params.code = codeRes || ''
+      // const codeRes = await getAuthCode()
+      // params.code = codeRes || ''
 
-      const { avatarUrl } = params
+      // const { avatarUrl } = params
 
       try {
-        if (
-          avatarUrl &&
-          (!isUrl(avatarUrl) || avatarUrl.includes('http://tmp'))
-        ) {
-          const fileRes = await uploadImgApi(avatarUrl)
-          params.avatarUrl = fileRes.msg.pic
-        }
+        // if (
+        //   avatarUrl &&
+        //   (!isUrl(avatarUrl) || avatarUrl.includes('http://tmp'))
+        // ) {
+        //   const fileRes = await uploadImgApi(avatarUrl)
+        //   params.avatarUrl = fileRes.msg.pic
+        // }
 
         const data = await loginApi(params)
-        const { token, uid } = data.msg
+        const { token, id: uid } = data.data
 
         // save token
         this.setToken(token)
-        this.setUserInfo(data.msg)
+        this.setUserInfo(data.data)
 
         Persistent.setLocal(USER_ID_KEY, uid)
 
-        return data.msg
+        return data.data
       } catch (error) {
         return Promise.reject(error)
       }
@@ -124,7 +124,7 @@ export const useUserStore = defineStore({
       this.setUserInfo(Persistent.getLocal(USER_INFO_KEY))
       this.setToken(Persistent.getLocal(TOKEN_KEY))
 
-      const { timeout = -1, uid, nickName, phone } = this.getUserInfo
+      const { timeout = -1, id: uid, nickName, phone } = this.getUserInfo
 
       try {
         // 用户登录过期

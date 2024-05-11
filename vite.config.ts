@@ -8,11 +8,18 @@ import { resolve } from 'path'
 export default defineConfig({
   build: {
     sourcemap: true,
+    terserOptions: {
+      compress: {
+        drop_console: true,
+      },
+    },
   },
   server: {
     proxy: {
       '/api': {
         target: 'http://wmsapi.lkstree.cloud',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, '')
       }
     }
   },

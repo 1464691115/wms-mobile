@@ -112,6 +112,7 @@
         },
         "router" : {
             "mode" : "history"
-        }
+        },
+        "title" : "云仓库"
     }
 }

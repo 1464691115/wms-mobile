@@ -9,6 +9,12 @@
 <script lang="ts" setup>
 import { ComponentOptions, useForm } from '@/components/Basic/Form'
 import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
+import useRequestList from '@/hooks/web/useRequestList';
+import { getCategoryList } from '@/service/sys/category';
+import { CategoryType } from '@/service/sys/model/categoryModel';
+import { onShow } from '@dcloudio/uni-app';
+
+const categoryList = useRequestList({ api: getCategoryList.bind(null, CategoryType.物料分类) })
 
 const [register] = useForm({
   layout: 'horizontal',
@@ -26,9 +32,12 @@ const [register] = useForm({
       required: true,
     },
     {
-      label: '规格型号',
-      field: 'specs',
-      component: ComponentOptions.Input,
+      label: '货品类型',
+      field: 'category_id',
+      component: ComponentOptions.Select,
+      componentProps:{
+        
+      }
     },
     {
       label: '货品编码',
@@ -42,11 +51,6 @@ const [register] = useForm({
       label: '条形码',
       field: 'barCode',
       component: ComponentOptions.Input,
-    },
-    {
-      label: '货品类型',
-      field: 'type',
-      component: ComponentOptions.Select,
     },
     {
       label: '初始仓库',
@@ -68,6 +72,11 @@ const [register] = useForm({
     console.log(arguments)
   },
 })
+
+onShow(() => {
+})
+
+
 </script>
 
 <style lang="scss" scoped>

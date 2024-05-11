@@ -526,7 +526,7 @@ $width: 30rpx;
     content: '';
     position: absolute;
     background-color: #8799a3;
-    left: $width / 2;
+    left: calc($width / 2);
     width: 1px;
     height: $width;
   }

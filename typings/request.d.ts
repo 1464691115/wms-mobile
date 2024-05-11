@@ -2,7 +2,7 @@
 declare interface Result<T = string> {
   returnCode: import('@/enums/httpEnum').ResultEnum
   msg: T
-  data?: T
+  data: T
 }
 
 /** 列表请求参数 */
