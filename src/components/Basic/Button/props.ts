@@ -20,6 +20,11 @@ export const baseButtonProps = {
     type: Boolean,
     default: undefined,
   },
+  /** 是否在加载 */
+  loading: {
+    type: Boolean,
+    default: undefined,
+  },
   /** 自定义样式 */
   customStyle: Object as PropType<CSSProperties>,
 }

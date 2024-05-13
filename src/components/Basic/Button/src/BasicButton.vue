@@ -1,13 +1,12 @@
 <template>
-  <view
-    class="basic-button"
-    :class="[
-      buttonProps.plain ? 'plain' : 'back',
-      buttonProps.type && !buttonProps.plain && 'onPlain',
-      buttonProps.type || 'info',
-    ]"
-    :style="buttonStyle"
-  >
+  <view class="basic-button" :class="[
+    buttonProps.plain ? 'plain' : 'back',
+    buttonProps.type && !buttonProps.plain && 'onPlain',
+    buttonProps.type || 'info',
+  ]" :style="buttonStyle">
+    <slot v-if="props.loading" name="loading">
+      <Icon class="loading-icon" color="#fff" :icon="ICON_UNICODE.LOADING" :size="32"/>
+    </slot>
     <slot>
       {{ buttonProps.title || buttonProps.text || '' }}
     </slot>
@@ -17,6 +16,7 @@
 import { computed, CSSProperties } from 'vue'
 import { useComponentsProps } from '../../hooks/useComponentsProps'
 import { baseButtonProps, BaseButtonPropsType } from '../props'
+import Icon from '@/components/Basic/Icon/src/Icon.vue';
 
 const props = defineProps({
   ...baseButtonProps,
@@ -31,8 +31,8 @@ const buttonStyle = computed<CSSProperties>(() => ({
   borderRadius:
     buttonProps.value.shape != 'square'
       ? (buttonProps.value.customStyle &&
-          buttonProps.value.customStyle.height) ||
-        `80px`
+        buttonProps.value.customStyle.height) ||
+      `80px`
       : 'none',
   opacity: buttonProps.value.disabled === true ? 0.4 : 1,
   cursor: buttonProps.value.disabled === true ? 'not-allowed' : 'pointer',
@@ -59,6 +59,11 @@ $error: #dd524d;
   &:active {
     opacity: 0.6 !important;
   }
+}
+
+.loading-icon {
+  margin-right: 20rpx;
+  animation: loading 1.5s infinite;
 }
 
 .basic-button.back {

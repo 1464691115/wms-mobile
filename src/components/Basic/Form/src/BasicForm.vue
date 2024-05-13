@@ -113,6 +113,13 @@
               :color="readComponentPropsItem(item)?.color ?? APP_PRESET_COLOR"
               @change="(e) => readComponentChange(item, e)"
             />
+
+            <uni-file-picker
+              v-else-if="item.component == ComponentOptions.Upload"
+              v-bind="readComponentPropsItem(item)"
+              v-model="formData[item.field]"
+              @success="(e) => readComponentChange(item, e)"
+            />
           </view>
         </view>
       </template>
@@ -137,13 +144,14 @@
         <BasicButton
           v-if="formProps.showSubmitButton === true"
           class="btn-text"
+          :loading="isSubmitLoading"
           :custom-props="{
             text: '提 交',
             shape: 'square',
             type: 'primary',
             ...(formProps.submitButtonOptions || {}),
           }"
-          @tap.stop="btnHandleSubmit"
+          @tap.stop="debounce(btnHandleSubmit)"
         />
       </view>
     </slot>
@@ -180,6 +188,7 @@ import { isArray, isFunction, isNumber, isObject, isString } from '@/utils/is'
 import { APP_PRESET_COLOR } from '@/settings/designSetting'
 import { dateUtil, DATE_TIME_FORMAT } from '@/utils/dateUtil'
 import SelectorPicker from '@/components/SelectorPicker.vue'
+import debounce from '@/utils/lib/debounce'
 
 defineOptions({
   options: {
@@ -196,6 +205,7 @@ const emits = defineEmits<{
   (e: 'register', methods: BasicForm.FormMethodsType): Promise<any>
 }>()
 
+const isSubmitLoading = ref(false)
 const formData = ref({})
 const formProps = reactive({} as BaseFormPropsType)
 
@@ -250,9 +260,17 @@ function btnHandleReset() {
 }
 /** 提交表单 */
 async function btnHandleSubmit() {
-  await validate()
+  if (isSubmitLoading.value) return
+  isSubmitLoading.value = true
 
-  handleSubmit()
+  try {
+    await validate()
+
+    await handleSubmit()
+  } catch (error) {
+  } finally {
+    isSubmitLoading.value = false
+  }
 }
 
 const getFieldsValue: BasicForm.FormMethodsType['getFieldsValue'] = () => {
@@ -282,11 +300,11 @@ const handleSubmit: BasicForm.FormMethodsType['submit'] = () => {
     } else {
       try {
         await formProps.submitApiFunc?.(unref(formData))
-        await showToast('操作成功')
+        showToast('操作成功')
         resolve(true)
       } catch (error) {
         typeof error == 'string'
-          ? await showToast(error || '操作失败')
+          ? showToast(error || '操作失败')
           : console.error(error)
         reject(error)
       }
@@ -524,7 +542,7 @@ function readComponentChange(item: BasicForm.FormSchema, e) {
 
 /** 处理所有组件的默认值 */
 function readComponentDefValue(item: BasicForm.FormSchema) {
-  const self_comp = readComponentPropsItem(item)
+  // const self_comp = readComponentPropsItem(item)
   let self_val = formData.value[item.field]
 
   switch (item.component) {
