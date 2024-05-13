@@ -4,14 +4,14 @@ import { BaseFormPropsType } from '../props'
 import { BasicForm } from '../types'
 type DeepReadonly<T> = {
   readonly [K in keyof T]: T[K] extends
-    | string
-    | boolean
-    | number
-    | undefined
-    | null
-    | Function
-    ? T[K]
-    : DeepReadonly<T[K]>
+  | string
+  | boolean
+  | number
+  | undefined
+  | null
+  | Function
+  ? T[K]
+  : DeepReadonly<T[K]>
 }
 
 type PropsDeepReadonly = DeepReadonly<Partial<BaseFormPropsType>>

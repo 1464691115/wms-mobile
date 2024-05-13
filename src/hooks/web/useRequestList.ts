@@ -6,6 +6,8 @@ export default function <A>(props: { api: (...arg) => Promise<Result<A>>, immedi
     watch(() => props, (val) => {
         if (val.immediate === false) return
         reload()
+    }, {
+        immediate: true
     })
 
     function reload() {
@@ -14,8 +16,8 @@ export default function <A>(props: { api: (...arg) => Promise<Result<A>>, immedi
         })
     }
 
-    return {
+    return [
         list,
         reload
-    }
+    ] as const
 }
