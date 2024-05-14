@@ -320,6 +320,18 @@ const setProps: BasicForm.FormMethodsType['setProps'] = (_formProps) => {
       formActionType: formMethods,
       formModal: formData.value,
     })
+
+    if (formProps.schemas) {
+      setFieldsValue(
+        formProps.schemas.reduce((pre, el) => {
+          const self_data = getFieldsValue()
+          if (el.defaultValue && !self_data[el.field]) {
+            pre[el.field] = el.defaultValue
+          }
+          return pre
+        }, {}),
+      )
+    }
     nextTick(() => resolve(true))
   })
 }

@@ -31,7 +31,7 @@ export namespace BasicForm {
     field: string
   }
 
-  export interface ActionButtonOption extends BaseButtonPropsType {}
+  export interface ActionButtonOption extends BaseButtonPropsType { }
 
   export interface FormSchema
     extends Pick<
@@ -42,7 +42,7 @@ export namespace BasicForm {
 
     label?: string | ((schemaItem: Exclude<FormSchema, 'label'>) => string)
 
-    defaultValue?: string | object
+    defaultValue?: string | number | object
 
     required?: boolean
     /** 判断当前组件是否禁用 */

@@ -45,8 +45,8 @@ export function useForm<P extends PropsDeepReadonly>(
     return form as Exclude<typeof form, null>
   }
 
-  function register(methods) {
-    formRef.value = unref(methods)
+  function register(met) {
+    formRef.value = unref(met)
 
     nextTick().then(async () => {
       for (let i = tasksList.length - 1; i >= 0; i--) {
@@ -60,7 +60,7 @@ export function useForm<P extends PropsDeepReadonly>(
       () => props,
       () => {
         if (props) {
-          methods.setProps(getDynamicProps(props))
+          met.setProps(getDynamicProps(props))
         }
       },
       {
@@ -74,18 +74,6 @@ export function useForm<P extends PropsDeepReadonly>(
     setProps: async (formProps: Partial<BaseFormPropsType>) => {
       const form = await getForm()
       form.setProps(formProps)
-
-      if (formProps.schemas) {
-        form.setFieldsValue(
-          formProps.schemas.reduce((pre, el) => {
-            const self_data = form.getFieldsValue()
-            if (el.defaultValue && !self_data[el.field]) {
-              pre[el.field] = el.defaultValue
-            }
-            return pre
-          }, {}),
-        )
-      }
     },
 
     getProps: () => {

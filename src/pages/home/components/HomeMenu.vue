@@ -43,6 +43,11 @@ const menuList = ref([
     id: 3,
     pic: '/static/images/home/home_menu_3.png',
     title: '单据列表',
+    click() {
+      to({
+        url: ROUTES_URL.STOCK_LIST,
+      })
+    },
   },
   {
     id: 4,

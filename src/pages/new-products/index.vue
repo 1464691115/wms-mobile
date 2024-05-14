@@ -1,7 +1,7 @@
 <template>
   <view class="new-products new-products-wrap">
     <view class="new-products-form">
-      <BasicForm @register="register"></BasicForm>
+      <BasicForm @register="register" />
     </view>
   </view>
 </template>
@@ -9,22 +9,35 @@
 <script lang="ts" setup>
 import { ComponentOptions, useForm } from '@/components/Basic/Form'
 import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
-import useRequestList from '@/hooks/web/useRequestList';
-import { getCategoryList } from '@/service/sys/category';
-import { CategoryType } from '@/service/sys/model/categoryModel';
-import { onShow } from '@dcloudio/uni-app';
+import useRequestList from '@/hooks/web/useRequestList'
+import { addMaterialList } from '@/service/material'
+import { getCategoryList } from '@/service/sys/category'
+import { CategoryType } from '@/service/sys/model/categoryModel'
+import { onShow } from '@dcloudio/uni-app'
 
-const categoryList = useRequestList({ api: getCategoryList.bind(null, CategoryType.物料分类) })
+const [categoryList] = useRequestList({
+  api: getCategoryList.bind(null, CategoryType.物料分类),
+})
+const [unitList] = useRequestList({
+  api: getCategoryList.bind(null, CategoryType.单位类别),
+})
 
 const [register] = useForm({
   layout: 'horizontal',
   baseColProps: {
     span: 24,
   },
-  labelWidth: 200,
+  labelWidth: 150,
   colon: false,
   showResetButton: false,
   schemas: [
+    {
+      label: '物料编号',
+      field: 'code',
+      component: ComponentOptions.Input,
+      dynamicDisabled: true,
+      defaultValue: Date.now() + Math.round(Math.random() * 899 + 100),
+    },
     {
       label: '货品名称',
       field: 'name',
@@ -33,50 +46,51 @@ const [register] = useForm({
     },
     {
       label: '货品类型',
-      field: 'category_id',
+      field: 'categoryId',
       component: ComponentOptions.Select,
-      componentProps:{
-        
-      }
-    },
-    {
-      label: '货品编码',
-      field: 'orderNo',
-      component: ComponentOptions.Input,
       componentProps: {
-        placeholder: '不输入则自动编码',
+        options: categoryList,
+        rangeLabel: 'name',
+        rangeId: 'id',
       },
     },
     {
-      label: '条形码',
-      field: 'barCode',
+      label: '单位',
+      field: 'unitId',
+      component: ComponentOptions.Select,
+      componentProps: {
+        options: unitList,
+        rangeLabel: 'name',
+        rangeId: 'id',
+      },
+    },
+    {
+      label: '安全库存',
+      field: 'safeNum',
+      component: ComponentOptions.Input,
+      componentProps: {},
+    },
+    {
+      label: '有效天数',
+      field: 'validDay',
       component: ComponentOptions.Input,
     },
-    {
-      label: '初始仓库',
-      field: 'warehouse',
-      component: ComponentOptions.Select,
-    },
-    {
-      label: '货品图片',
-      field: 'img',
-      component: ComponentOptions.Upload,
-    },
+
     {
       label: '备注',
-      field: 'descript',
+      field: 'remark',
       component: ComponentOptions.Textarea,
     },
-  ],
-  submitApiFunc() {
-    console.log(arguments)
+  ] as const,
+  async submitApiFunc(data) {
+    const res = await addMaterialList({
+      ...data,
+      type: 2,
+    })
   },
 })
 
-onShow(() => {
-})
-
-
+onShow(() => {})
 </script>
 
 <style lang="scss" scoped>
@@ -86,6 +100,10 @@ onShow(() => {
 
   .new-products-form {
     padding: 30rpx 36rpx 40rpx;
+  }
+
+  .new-products-button {
+    margin: 20rpx 1rpx 0 0;
   }
 }
 </style>

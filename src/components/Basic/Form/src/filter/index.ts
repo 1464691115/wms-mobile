@@ -1,4 +1,3 @@
-import { isArray } from '@/utils/is'
 import { BasicForm } from '../types'
 
 export function filterComponentsProps(this, arr, propsParams = {}) {
