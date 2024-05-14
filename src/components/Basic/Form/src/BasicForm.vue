@@ -157,7 +157,7 @@
     </slot>
   </view>
 </template>
-<script lang="ts" setup>
+,<script lang="ts" setup>
 import {
   computed,
   CSSProperties,
