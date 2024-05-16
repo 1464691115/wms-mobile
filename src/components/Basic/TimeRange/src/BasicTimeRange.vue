@@ -7,7 +7,7 @@
       <text class="time-text">
         {{ currentTime.startTime }} - {{ currentTime.stopTime }}
       </text>
-      <GlobalIcon :icon="ICON_UNICODE.calendar" color="#939393" />
+      <GlobalIcon :icon="ICON_UNICODE.RILI" color="#939393" />
     </view>
 
     <u-calendar
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { moment } from '@/utils/global'
+import { dateUtil } from '@/utils/dateUtil'
 import { ref, watch } from 'vue'
 import { BasicTimeRange as TimeRange } from './types'
 
@@ -49,8 +49,8 @@ const emits = defineEmits<{
 
 const showTime = ref(false)
 const currentTime = ref({
-  startTime: moment().format('yyyy-MM-dd'),
-  stopTime: moment().format('yyyy-MM-dd'),
+  startTime: dateUtil().format('yyyy-MM-dd'),
+  stopTime: dateUtil().format('yyyy-MM-dd'),
 })
 
 watch(

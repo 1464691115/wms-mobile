@@ -18,6 +18,7 @@
 import Tabs from '@/components/Tabs/Tabs.vue'
 import { ref } from 'vue'
 import StockEntry from './components/StockEntry.vue'
+import StockOut from './components/StockOut.vue'
 
 const tabsList = [
   {
@@ -28,7 +29,7 @@ const tabsList = [
   {
     name: '出库单',
     value: 'out',
-    component: StockEntry,
+    component: StockOut,
   },
 ]
 
@@ -39,4 +40,15 @@ function animationfinish({ detail }) {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.stock-list {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  .swiper-box {
+    flex: 1;
+  }
+}
+</style>

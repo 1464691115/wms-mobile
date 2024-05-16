@@ -32,7 +32,7 @@
       </slot>
       <Icon
         v-if="isRightIcon === true"
-        :icon="ICON_UNICODE.ARROW_RIGHT_1"
+        :icon="ICON_UNICODE.ARROW"
         :size="44"
         color="#c0bdc1"
       />

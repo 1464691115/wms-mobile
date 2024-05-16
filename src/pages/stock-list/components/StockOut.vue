@@ -9,7 +9,7 @@
   >
     <ListView
       v-if="uuBuildId"
-      :api="getStockEntryApiList"
+      :api="getStockOutApiList"
       is-custom-next
       :params="queryParams"
       :on-register="register"
@@ -37,7 +37,7 @@ import { usePagination } from '@/layout/ListView'
 import ListView from '@/layout/ListView/ListView.vue'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { buildUUID } from '@/utils/uuid'
-import { getStockEntryApiList } from '@/service/stock-list'
+import { getStockOutApiList } from '@/service/stock-list'
 import Icon from '@/components/Basic/Icon/src/Icon.vue'
 
 defineOptions({

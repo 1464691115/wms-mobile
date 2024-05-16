@@ -207,7 +207,7 @@ export function usePaginationFn<
           },
         })
 
-        const { page, total_page, total_count, list } = res.msg
+        const { page, total_page, total_count, list } = res.data
 
         const old_arr = paginationList.value || []
 

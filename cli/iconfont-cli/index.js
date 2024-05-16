@@ -50,7 +50,7 @@ function setVueIconfont() {
               projectId = $1
             })
             rawData.replace(/.icon\-([\w-]+):before\s\{\n\s+content: "(.*)"/g, (_, $1, $2) => {
-              entryItem += `\n  ${$1.toUpperCase().split('-').join('_')} = "${$2}",`
+              entryItem += `\n  ${$1.toUpperCase().split('-').join('_')} = "icon-${$1}",`
             })
 
             let resultTxt = data.toString('utf8')
