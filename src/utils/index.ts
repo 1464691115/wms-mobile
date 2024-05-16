@@ -229,3 +229,8 @@ export function stringToRgb(str, mode = 'string') {
     return result.replace(/rgb\(/g, '').replace(/\)/g, '').split(',')
   }
 }
+
+
+export function ObjectForInMap<T extends object, KT extends keyof T, I extends (val: valueOfU<T>, key: KT) => any>(obj: T, inter: I) {
+  return Object.keys(obj).map<ReturnType<I>>(el => inter?.(obj[el], el as any))
+}

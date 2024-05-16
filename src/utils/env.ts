@@ -45,6 +45,7 @@ export function getAppEnvConfig() {
     /** 全局图片前缀 */
     VITE_GLOB_IMG_PREFIX: 'http://localhost',
     VITE_GLOB_APP_SHORT_NAME: pkg.name,
+    VITE_GLOB_FONT_URL: '/static/font/DingTalk-JinBuTi.woff',
   }
 
   let version = ''
