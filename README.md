@@ -42,7 +42,11 @@ yarn build
 1. to 开头为跳转函数，统一封装在 **src/utils/global/toPage.ts** 文件中
 2. 字符转换工具 统一封装在 **src/utils/global/index.ts** 文件中
 3. 接口 统一封装在 **src/service** 文件中
-4. 快捷生成页面命令
+4. 快捷生成图标命令
    ```
-   yarn sview page [fileName]
+   yarn iconfont-cli
+   font_class_url: [url]
    ```
+   url 在下方复制 \
+   ![alt text](public/image.png)
+

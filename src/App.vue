@@ -36,10 +36,6 @@ const { VITE_GLOB_FONT_URL } = getAppEnvConfig()
 @import '@/static/style/style.scss';
 @import '@/components/Basic/Icon/src/icon-font.scss';
 
-.font-icon {
-  font-family: 'iconfont';
-}
-
 view {
   box-sizing: border-box;
 }

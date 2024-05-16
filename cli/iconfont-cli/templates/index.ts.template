@@ -1,0 +1,20 @@
+import type { App } from 'vue'
+
+/** 图标  https://www.iconfont.cn/manage/index?manage_type=myprojects&projectId=#projectId# */
+export enum ICON_UNICODE {#ICON_UNICODE#
+}
+
+
+export type ICON_UNICODE_VALUE =
+  | keyof {
+    [Key in keyof typeof ICON_UNICODE as `${(typeof ICON_UNICODE)[Key]}`]: any
+  }
+  | keyof typeof ICON_UNICODE
+
+export const globalIcon = { ICON_UNICODE }
+
+export default {
+  install(app: App) {
+    app.config.globalProperties.ICON_UNICODE = ICON_UNICODE
+  },
+}

@@ -1,6 +1,6 @@
 <template>
   <span
-    class="font-icon"
+    class="iconfont"
     v-html="icon"
     :style="{
       fontSize: Px(props.size || 48),
@@ -31,7 +31,7 @@ const icon = computed(() => {
 </script>
 
 <style scoped>
-.font-icon {
+.iconfont {
   transition: all 0.2s;
 }
 </style>
