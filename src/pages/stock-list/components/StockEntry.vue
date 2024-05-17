@@ -15,13 +15,18 @@
       :on-register="register"
     >
       <template #empty>
-        <view class="full" style="padding-top: 100rpx">
-          <Icon :icon="ICON_UNICODE.QUESHENGYE_QINGDENGDAI" />
+        <view class="full justify-center" style="padding-top: 100rpx">
+          <Icon :icon="ICON_UNICODE.QUESHENGYE_ZANWUSHUJU" :size="200" />
         </view>
       </template>
       <template v-slot="{ list }">
         <view class="stock-entry flex-wrap">
-          <view v-for="item in list" :key="item.id" class="stock-entry-item">
+          <view
+            v-for="item in list"
+            :key="item.id"
+            class="stock-entry-item"
+            @click="handleStockItem(item)"
+          >
             <view>订单号：{{ item.orderNumber }}</view>
             <view>创建人：{{ item.createUserName }}</view>
             <view>创建日期：{{ item.createTime }}</view>
@@ -37,8 +42,10 @@ import { usePagination } from '@/layout/ListView'
 import ListView from '@/layout/ListView/ListView.vue'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { buildUUID } from '@/utils/uuid'
-import { getStockEntryApiList } from '@/service/stock-list'
+import { getStockEntryApiList } from '@/service/stock'
 import Icon from '@/components/Basic/Icon/src/Icon.vue'
+import to from '@/routes/to'
+import { ROUTES_URL } from '@/routes'
 
 defineOptions({
   options: {
@@ -89,6 +96,15 @@ async function handlePullDownRef() {
   await nextTick()
   pullDownTriggered.value = false
 }
+
+function handleStockItem(item) {
+  to({
+    url: ROUTES_URL.STOCK_DETAIL,
+    query: {
+      sid: item.id,
+    },
+  })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -108,7 +124,7 @@ scroll-view {
 
   &-item {
     margin-top: 20rpx;
-    padding: 10rpx 20rpx;
+    padding: 15rpx 20rpx;
     width: 100%;
     background-color: #fff;
     border-radius: 10rpx;

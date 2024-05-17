@@ -9,16 +9,16 @@
 <script lang="ts" setup>
 import { ComponentOptions, useForm } from '@/components/Basic/Form'
 import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
-import useRequestList from '@/hooks/web/useRequestList'
+import useAxiosRef from '@/hooks/web/useAxiosRef'
 import { addMaterialList } from '@/service/material'
 import { getCategoryList } from '@/service/sys/category'
 import { CategoryType } from '@/service/sys/model/categoryModel'
 import { onShow } from '@dcloudio/uni-app'
 
-const [categoryList] = useRequestList({
+const [categoryList] = useAxiosRef({
   api: getCategoryList.bind(null, CategoryType.物料分类),
 })
-const [unitList] = useRequestList({
+const [unitList] = useAxiosRef({
   api: getCategoryList.bind(null, CategoryType.单位类别),
 })
 

@@ -1,7 +1,7 @@
 import { ref, watch } from "vue";
 
 export default function <A>(props: { api: (...arg) => Promise<Result<A>>, immediate?}) {
-    const list = ref<A>()
+    const result = ref<A>()
 
     watch(() => props, (val) => {
         if (val.immediate === false) return
@@ -10,14 +10,16 @@ export default function <A>(props: { api: (...arg) => Promise<Result<A>>, immedi
         immediate: true
     })
 
-    function reload() {
-        props.api?.().then(res => {
-            list.value = res.data
+    function reload(...arg) {
+        console.log(arg);
+        
+        props.api?.(...arg).then(res => {
+            result.value = res.data
         })
     }
 
     return [
-        list,
+        result,
         reload
     ] as const
 }

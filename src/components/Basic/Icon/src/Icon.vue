@@ -1,7 +1,7 @@
 <template>
   <span
     class="iconfont"
-    :class="icon"
+    v-html="icon"
     :style="{
       fontSize: Px(props.size || 48),
       width: Px(props.size || 48),

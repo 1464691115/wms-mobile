@@ -5,7 +5,8 @@ export enum ROUTES_URL {
   NEW_PRODUCTS = '/pages/new-products/index',
   INBOUND_DOCUMENTS = '/pages/inbound-documents/index',
   LOGIN = '/pages/login/index',
-  STOCK_LIST = '/pages/stock-list/index'
+  STOCK_LIST = '/pages/stock-list/index',
+  STOCK_DETAIL = '/pages/stock-detail/index',
 }
 
 /** 测试使用，只在开发环境生效 */
@@ -58,6 +59,12 @@ const routes: routesType = [
     path: ROUTES_URL.STOCK_LIST,
     style: navigationBlock({
       navigationBarTitleText: '单据列表',
+    }),
+  },
+  {
+    path: ROUTES_URL.STOCK_DETAIL,
+    style: navigationBlock({
+      navigationBarTitleText: '单据详情',
     }),
   },
 
