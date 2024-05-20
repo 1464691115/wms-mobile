@@ -73,9 +73,9 @@
               :custom-props="readComponentPropsItem(item)"
             />
 
-            <SelectorPicker
-              v-else-if="item.component == ComponentOptions.Select"
-              :value="readComponentDefValue(item)"
+            <ApiSelect
+              v-else-if="item.component == ComponentOptions.ApiSelect"
+              v-model:value="formData[item.field]"
               v-bind="readComponentPropsItem(item)"
               :place="readComponentPlaceholder(item)"
               @change="(e) => readComponentChange(item, e)"
@@ -182,13 +182,13 @@ import {
   funcForIn,
   showToast,
 } from '@/utils/lib/s-view'
-import BasicInput from '../../Input/src/BasicInput.vue'
-import BasicButton from '../../Button/src/BasicButton.vue'
+import BasicInput from '@/components/Basic/Input/src/BasicInput.vue'
+import BasicButton from '@/components/Basic/Button/src/BasicButton.vue'
 import { isArray, isFunction, isNumber, isObject, isString } from '@/utils/is'
 import { APP_PRESET_COLOR } from '@/settings/designSetting'
 import { dateUtil, DATE_TIME_FORMAT } from '@/utils/dateUtil'
-import SelectorPicker from '@/components/SelectorPicker.vue'
 import debounce from '@/utils/lib/debounce'
+import ApiSelect from '@/components/Basic/ApiSelect/src/ApiSelect.vue'
 
 defineOptions({
   options: {
@@ -475,10 +475,7 @@ function readComponentPropsItem(item: BasicForm.FormSchema) {
       componentProps.selectedColor =
         componentProps.selectedColor ?? APP_PRESET_COLOR
       break
-    case ComponentOptions.Select:
-      componentProps.list = (componentProps.options || []).map((el) =>
-        !isObject(el) ? { title: el, id: el } : el,
-      )
+    case ComponentOptions.ApiSelect:
       break
     case ComponentOptions.DateTime:
       break
@@ -506,7 +503,7 @@ function readComponentPlaceholder(item: BasicForm.FormSchema) {
 
   switch (item.component) {
     case ComponentOptions.DateTime:
-    case ComponentOptions.Select:
+    case ComponentOptions.ApiSelect:
     case ComponentOptions.GroupRadio:
     case ComponentOptions.Switch:
       defMsg = '请选择'
@@ -542,8 +539,7 @@ function readComponentChange(item: BasicForm.FormSchema, e) {
     case ComponentOptions.Switch:
       formData.value[item.field] = e.detail.value ?? ''
       break
-    case ComponentOptions.Select:
-      formData.value[item.field] = e.value ?? ''
+    case ComponentOptions.ApiSelect:
       break
     case ComponentOptions.GroupRadio:
       break
@@ -568,7 +564,7 @@ function readComponentDefValue(item: BasicForm.FormSchema) {
         self_val = self_val <= 0 ? true : false
       }
       break
-    case ComponentOptions.Select:
+    case ComponentOptions.ApiSelect:
       break
     default:
       break

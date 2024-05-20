@@ -6,22 +6,37 @@
 <script lang="ts" setup>
 import { ComponentOptions, useForm } from '@/components/Basic/Form'
 import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
-import { dateUtil } from '@/utils/dateUtil'
+import { onMounted } from 'vue'
 
-const [register] = useForm({
+const [register, { setFieldsValue }] = useForm({
   schemas: [
     {
       field: 'test',
       label: '事件',
-      component: ComponentOptions.DateTime,
+      component: ComponentOptions.ApiSelect,
       componentProps: {
-        type: 'daterange',
+        resultField: '',
+        api: function () {
+          return new Promise((res) =>
+            setTimeout(
+              () =>
+                res([
+                  { label: 'test', value: 1 },
+                  { label: 'test1', value: 2 },
+                  { label: 'test2', value: 3 },
+                  { label: 'test3', value: 4 },
+                ]),
+              1000,
+            ),
+          )
+        },
       },
     },
   ],
-  fieldMapToDouble: [
-    ['test', ['date1', 'date2'], (val) => dateUtil(val).format('DD/MM/YYYY')],
-  ],
+})
+
+onMounted(() => {
+  setFieldsValue({ test: '1' })
 })
 </script>
 <style lang="scss" scoped></style>

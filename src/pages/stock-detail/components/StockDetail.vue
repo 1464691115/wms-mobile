@@ -18,15 +18,20 @@
           </view>
         </template>
       </uni-section>
+
+      <BasicForm @register="register" />
     </view>
   </view>
 </template>
 
 <script lang="ts" setup>
+import { useForm } from '@/components/Basic/Form'
+import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
 import Icon from '@/components/Basic/Icon/src/Icon.vue'
 import { getStockEntryInfo } from '@/service/stock'
 import useAxiosRef from '@/utils/hooks/web/useAxiosRef'
 import { watch } from 'vue'
+import { formSchema } from '../index.data'
 
 defineOptions({
   options: {
@@ -43,12 +48,23 @@ const [stockDetailInfo, reload] = useAxiosRef({
   immediate: false,
 })
 
+const [register, { setFieldsValue }] = useForm({
+  schemas: formSchema,
+  layout: 'vertical',
+  baseColProps: {
+    span: 24,
+  },
+  showActionButtonGroup: false,
+})
+
 watch(
   () => props.sid,
   (val) => {
     if (!val) return
 
-    reload({ id: val })
+    reload({ id: val }).then(() => {
+      setFieldsValue(stockDetailInfo.value)
+    })
   },
   {
     immediate: true,
@@ -61,8 +77,11 @@ watch(
   background-color: #fff;
 
   &_title {
+    padding: 0 10rpx;
+
     ::v-deep .uni-section {
       &-header {
+        padding: 18rpx 0;
         align-items: flex-start;
         &__decoration {
           margin-top: 8rpx;

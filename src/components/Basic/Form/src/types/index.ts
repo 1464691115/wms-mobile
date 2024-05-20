@@ -5,7 +5,7 @@ export enum ComponentOptions {
   Input = 'Input',
   InputNumber = 'InputNumber',
   GroupRadio = 'GroupRadio',
-  Select = 'Select',
+  ApiSelect = 'ApiSelect',
   Textarea = 'Textarea',
   Upload = 'Upload',
   DateTime = 'DateTime',
