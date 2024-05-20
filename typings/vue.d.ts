@@ -3,9 +3,9 @@ import { custom } from 'cli/writeFill/custom'
 import { globalIcon } from '@/components/Basic/Icon'
 import { Ref } from 'vue'
 
-export {}
+export { }
 
-declare module 'vue' {
+declare module '@vue/runtime-core' {
   type globalUtilsType = typeof globalUtils
   type globalIconType = typeof globalIcon
 
@@ -13,14 +13,15 @@ declare module 'vue' {
 
   export interface ComponentCustomProperties
     extends globalUtilsType,
-      globalIconType {}
+    globalIconType {
+  }
 
   type GlobalComponentsType = {
     NavBarCustom: typeof import('@/components/NavBarCustom/NavBarCustom.vue').default
   }
 
   /** 全局组件 */
-  export interface GlobalComponents extends GlobalComponentsType {}
+  export interface GlobalComponents extends GlobalComponentsType { }
 
   export interface SVGAttributes {
     mode: 0 | 1
@@ -43,6 +44,6 @@ declare module 'vue' {
     __isFragment?: never
     __isTeleport?: never
     __isSuspense?: never
-    new (...args: any[]): T
+    new(...args: any[]): T
   }
 }

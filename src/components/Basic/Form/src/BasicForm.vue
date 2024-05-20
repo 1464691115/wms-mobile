@@ -100,9 +100,9 @@
             <uni-datetime-picker
               v-else-if="item.component == ComponentOptions.DateTime"
               v-bind="readComponentPropsItem(item)"
-              rangeSeparator="~"
               v-model="formData[item.field]"
               :placeholder="readComponentPlaceholder(item)"
+              rangeSeparator="~"
               @change="(e) => readComponentChange(item, e)"
             />
 
@@ -274,6 +274,9 @@ async function btnHandleSubmit() {
 }
 
 const getFieldsValue: BasicForm.FormMethodsType['getFieldsValue'] = () => {
+  if (formProps.fieldMapToDouble)
+    formProps.schemas?.forEach((item) => formatFieldMapToDouble(item))
+
   return formData.value
 }
 
@@ -344,7 +347,7 @@ const removeSchemaByFiled: BasicForm.FormMethodsType['removeSchemaByFiled'] = (
   field,
 ) => {
   return new Promise(async (resolve) => {
-    let array = Array.isArray(field) ? field : new Array(field)
+    let array = isArray(field) ? field : new Array(field)
     formProps.schemas = formProps.schemas?.filter((el) => {
       if (array.includes(el.field)) {
         array = array.filter((a_el) => a_el !== el.field)
@@ -384,7 +387,7 @@ const appendSchemaByField: BasicForm.FormMethodsType['appendSchemaByField'] = (
 
 const updateSchema: BasicForm.FormMethodsType['updateSchema'] = (data) => {
   return new Promise(async (resolve) => {
-    const array = Array.isArray(data) ? data : new Array(data)
+    const array = isArray(data) ? data : new Array(data)
 
     if (!formProps.schemas) {
       resolve(false)
@@ -405,7 +408,7 @@ const updateSchema: BasicForm.FormMethodsType['updateSchema'] = (data) => {
 
 const resetSchema: BasicForm.FormMethodsType['resetSchema'] = (data) => {
   return new Promise(async (resolve) => {
-    const array = Array.isArray(data) ? data : new Array(data)
+    const array = isArray(data) ? data : new Array(data)
     formProps.schemas = array as unknown as BasicForm.FormSchema[]
     nextTick(() => resolve(true))
   })
@@ -423,7 +426,6 @@ const validate: BasicForm.FormMethodsType['validate'] = () => {
           el.required &&
           (self_data === '' || self_data === null || self_data === undefined)
         ) {
-          console.log(self_data)
           const msg = readComponentPlaceholder(el)
           throw msg
         } else if (el.rule && isString(self_data)) {
@@ -526,15 +528,16 @@ function readComponentPlaceholder(item: BasicForm.FormSchema) {
 /** 处理所有组件的更改回调函数 */
 function readComponentChange(item: BasicForm.FormSchema, e) {
   const self_comp = readComponentPropsItem(item)
-  console.log(item, e, self_comp)
 
   switch (item.component) {
     case ComponentOptions.DateTime:
       const self_format =
         readComponentPropsItem(item)?.format || DATE_TIME_FORMAT
-      formData.value[item.field] = isArray(e)
-        ? e.map((el) => dateUtil(el).format(self_format)).join('~')
-        : dateUtil(e).format(self_format)
+
+      if (isArray(e))
+        formatFieldMapToDouble?.(item) ??
+          e.map((el) => dateUtil(el).format(self_format))
+      else dateUtil(e).format(self_format)
       break
     case ComponentOptions.Switch:
       formData.value[item.field] = e.detail.value ?? ''
@@ -572,6 +575,25 @@ function readComponentDefValue(item: BasicForm.FormSchema) {
   }
 
   return self_val
+}
+
+/** 处理映射字段为两个 */
+function formatFieldMapToDouble(item: BasicForm.FormSchema) {
+  const self_fieldMapToDouble = formProps.fieldMapToDouble?.find((el) =>
+    el[0].includes(item.field),
+  )
+
+  if (isArray(self_fieldMapToDouble)) {
+    const [field, double, format] = self_fieldMapToDouble
+    if (!field.includes(item.field)) return true
+
+    const [field1, field2] = double
+    const [val1, val2] = formData.value[field]
+
+    formData.value[field1] = format?.(val1) ?? val1
+    formData.value[field2] = format?.(val2) ?? val2
+  }
+  return true
 }
 
 const formMethods: BasicForm.FormMethodsType = {

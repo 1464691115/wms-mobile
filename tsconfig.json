@@ -10,6 +10,7 @@
     "strictFunctionTypes": false,
     "jsx": "preserve",
     "baseUrl": ".",
+    "outDir": "./dist",
     "allowJs": true,
     "sourceMap": true,
     "esModuleInterop": true,

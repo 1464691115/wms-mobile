@@ -50,6 +50,30 @@ export const baseFormProps = {
     resetFunc: { type: Function as PropType<() => Promise<void>> },
     submitFunc: { type: Function as PropType<() => Promise<void>> },
 
+
+    /** 
+     * 用于将表单内一个字段的映射成 2 个字段, 例如 时间开始、结束
+     * @description fieldMapToDouble
+        将表单内时间区域的值映射成 2 个字段
+
+        如果表单内有时间区间组件，获取到的值是一个数组，但是往往我们传递到后台需要是 2 个字段
+    ``` javascript
+        useForm({
+            fieldMapToDouble: [
+                // data为时间组件在表单内的字段，startTime，endTime为转化后的开始时间与结束时间
+                ['datetime', ['startTime', 'endTime'], (val) => dateUtil(val).format('YYYY-MM-DD')],
+                // 支持多个字段
+                ['datetime1', ['startTime1', 'endTime1'], (val) => dateUtil(val).format('YYYY-MM-DD HH:mm:ss')],
+            ],
+        });
+        
+        // fieldMapToDouble没写的时候表单获取到的值
+        {
+            datetime: [String,String]
+        }
+    ```
+    */
+    fieldMapToDouble: { type: Array as PropType<[string, [string, string], ((val) => string)?][]> }
 }
 
 
