@@ -81,13 +81,11 @@
               @change="(e) => readComponentChange(item, e)"
             />
 
-            <uni-easyinput
+            <textarea
               v-else-if="item.component == ComponentOptions.Textarea"
               v-model="formData[item.field]"
               v-bind="readComponentPropsItem(item)"
-              type="textarea"
               :maxlength="item.componentProps?.maxlength || -1"
-              :auto-height="item.componentProps?.autoHeight"
               :placeholder="readComponentPlaceholder(item)"
             />
 

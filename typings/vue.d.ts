@@ -1,6 +1,7 @@
 import * as globalUtils from '@/utils/global'
 import { custom } from 'cli/writeFill/custom'
 import { globalIcon } from '@/components/Basic/Icon'
+import { globalIconColor } from '@/components/Basic/IconColor'
 import { Ref } from 'vue'
 
 export { }
@@ -8,11 +9,13 @@ export { }
 declare module 'vue' {
   type globalUtilsType = typeof globalUtils
   type globalIconType = typeof globalIcon
+  type globalIconColorType = typeof globalIconColor
 
   export type UnRef<T> = T extends Ref<infer P> ? P : Partial
 
   export interface ComponentCustomProperties
     extends globalUtilsType,
+    globalIconColorType,
     globalIconType {
   }
 

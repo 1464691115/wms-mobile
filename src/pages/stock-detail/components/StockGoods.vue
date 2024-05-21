@@ -7,20 +7,31 @@
     @refresherrestore="() => (pullDownTriggered = 'restore')"
     @scrolltolower="reload"
   >
+    <view class="stock-goods_search flex justify-between">
+      <BasicInput placeholder="请输入">
+        <template #prefix>
+          <Icon :icon="ICON_UNICODE.SEARCH" color="#989898" size="33" />
+        </template>
+      </BasicInput>
+      <view class="stock-goods_search-btn">查询</view>
+    </view>
     <ListView
       v-if="uuBuildId"
-      :api="getStockOutApiList"
+      :api="moveSelectByStockEntryIdApi"
       is-custom-next
       :params="queryParams"
       :on-register="register"
     >
       <template #empty>
         <view class="full justify-center" style="padding-top: 100rpx">
-          <Icon :icon="ICON_UNICODE.QUESHENGYE_ZANWUSHUJU" :size="200" />
+          <IconColor
+            :icon="ICON_COLOR_UNICODE.COLORQUESHENGYE_ZANWUSHUJU"
+            :size="200"
+          />
         </view>
       </template>
       <template v-slot="{ list }">
-        <view class="stock-entry flex-wrap">
+        <view class="stock-goods flex-wrap">
           <view v-for="item in list" :key="item.id" class="stock-entry-item">
             <view>订单号：{{ item.orderNumber }}</view>
             <view>创建人：{{ item.createUserName }}</view>
@@ -37,8 +48,10 @@ import { usePagination } from '@/layout/ListView'
 import ListView from '@/layout/ListView/ListView.vue'
 import { nextTick, onMounted, ref, watch } from 'vue'
 import { buildUUID } from '@/utils/uuid'
-import { getStockOutApiList } from '@/service/stock'
+import BasicInput from '@/components/Basic/Input/src/BasicInput.vue'
+import IconColor from '@/components/Basic/IconColor/src/IconColor.vue'
 import Icon from '@/components/Basic/Icon/src/Icon.vue'
+import { moveSelectByStockEntryIdApi } from '@/service/move'
 
 defineOptions({
   options: {
@@ -61,11 +74,11 @@ const pullDownTriggered = ref(false as string | boolean)
 const uuBuildId = ref('uuid')
 const queryParams = ref({
   title: '',
-  tid: 0,
+  sid: 0,
 })
 
 watch(
-  () => [props.searchQuery, queryParams.value.tid],
+  () => [props.searchQuery, queryParams.value.sid],
   () => {
     queryParams.value.title = props.searchQuery || ''
 
@@ -96,6 +109,31 @@ $_zw: 690rpx;
 
 scroll-view {
   height: 100%;
+  background-color: #fff;
+
+  ::v-deep .basic-input {
+    .basic-input_group-content {
+      height: 64rpx;
+
+      background-color: #f0f0f0;
+      border-radius: 64rpx;
+    }
+  }
+}
+
+.stock-goods_search {
+  margin: 20rpx 0;
+  padding: 0 30rpx;
+
+  align-items: center;
+
+  &-btn {
+    margin-left: 22rpx;
+    text-wrap: nowrap;
+    color: #343434;
+    font-size: 28rpx;
+    line-height: 28rpx;
+  }
 }
 
 .stock-entry {

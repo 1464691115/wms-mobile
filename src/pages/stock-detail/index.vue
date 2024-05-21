@@ -11,6 +11,17 @@
         <component :is="item.component" :sid="sid" />
       </swiper-item>
     </swiper>
+
+    <view class="stock-detail_footer">
+      <view class="_btn">
+        <Icon :icon="ICON_UNICODE.COPY" />
+        复制
+      </view>
+      <view class="_btn">
+        <Icon :icon="ICON_UNICODE.TUBIAO_SHANCHU" />
+        删除
+      </view>
+    </view>
   </view>
 </template>
 
@@ -20,6 +31,7 @@ import { ref } from 'vue'
 import StockDetail from './components/StockDetail.vue'
 import StockGoods from './components/StockGoods.vue'
 import { onLoad } from '@dcloudio/uni-app'
+import Icon from '@/components/Basic/Icon/src/Icon.vue'
 
 const tabsList = [
   {
@@ -40,7 +52,7 @@ onLoad((opt) => {
   }
 })
 
-const currentTabs = ref(0)
+const currentTabs = ref(1)
 const sid = ref()
 
 function animationfinish({ detail }) {
@@ -54,9 +66,36 @@ function animationfinish({ detail }) {
 
   display: flex;
   flex-direction: column;
+  background-color: #f3f4f8;
 
   .swiper-box {
     flex: 1;
+  }
+
+  .stock-detail_footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
+    height: 114rpx;
+    display: flex;
+    align-items: center;
+
+    box-shadow: 0px -4px 10px rgba(186, 186, 186, 0.2);
+    background-color: #fff;
+
+    ._btn {
+      margin-left: 60rpx;
+
+      color: #6e6e6e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      row-gap: 4rpx;
+
+      font-size: 20rpx;
+    }
   }
 }
 </style>

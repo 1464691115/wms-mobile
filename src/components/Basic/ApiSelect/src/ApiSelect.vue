@@ -6,6 +6,7 @@
       :range="options"
       :value="index == -1 ? 0 : index"
       range-key="label"
+      v-bind="$attrs"
       @change="bindTimeChange"
     >
       <view class="con-wrap" />
@@ -33,7 +34,7 @@
       </slot>
       <Icon
         v-if="isRightIcon === true"
-        :icon="ICON_UNICODE.ARROW_RIGHT_1"
+        :icon="ICON_UNICODE.ARROW"
         :size="44"
         color="#c0bdc1"
       />

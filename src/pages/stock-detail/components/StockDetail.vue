@@ -18,8 +18,27 @@
           </view>
         </template>
       </uni-section>
+    </view>
+    <view class="stock-detail_content">
+      <BasicForm v-if="isEdit" @register="register" />
 
-      <BasicForm @register="register" />
+      <view
+        v-else
+        v-for="item in formSchema"
+        :key="item.field"
+        class="txt-cell flex justify-between"
+      >
+        <view style="color: #656565">{{ item.label }}</view>
+        <view style="color: #313131">
+          {{
+            item.field == 'categoryId'
+              ? categoryList?.find(
+                  (el) => el.id == stockDetailInfo?.[item.field],
+                )?.name
+              : stockDetailInfo?.[item.field]
+          }}
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -30,8 +49,8 @@ import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
 import Icon from '@/components/Basic/Icon/src/Icon.vue'
 import { getStockEntryInfo } from '@/service/stock'
 import useAxiosRef from '@/utils/hooks/web/useAxiosRef'
-import { watch } from 'vue'
-import { formSchema } from '../index.data'
+import { ref, watch } from 'vue'
+import { categoryList, formSchema } from '../index.data'
 
 defineOptions({
   options: {
@@ -50,12 +69,16 @@ const [stockDetailInfo, reload] = useAxiosRef({
 
 const [register, { setFieldsValue }] = useForm({
   schemas: formSchema,
-  layout: 'vertical',
+  layout: 'horizontal',
+  labelWidth: 160,
+  labelAlign: 'end',
   baseColProps: {
-    span: 24,
+    span: 23,
   },
   showActionButtonGroup: false,
 })
+
+const isEdit = ref(false)
 
 watch(
   () => props.sid,
@@ -75,9 +98,10 @@ watch(
 <style lang="scss" scoped>
 .stock-detail {
   background-color: #fff;
+  padding: 0 0 10rpx;
 
   &_title {
-    padding: 0 10rpx;
+    padding: 0 30rpx;
 
     ::v-deep .uni-section {
       &-header {
@@ -89,5 +113,44 @@ watch(
       }
     }
   }
+
+  ::v-deep &_content {
+    margin-top: 10rpx;
+    padding: 0 20rpx 0 30rpx;
+
+    .txt-cell {
+      margin-bottom: 20rpx;
+    }
+
+    .form-item {
+      margin-bottom: 0 !important;
+    }
+
+    .is-disabled,
+    .is-disabled .basic-input_inner,
+    .is-disabled .input-padding,
+    .is-disabled .basic-input_group-content,
+    .uni-date-editor--x__disabled {
+      padding-left: 0;
+      border-color: transparent !important;
+      background-color: transparent !important;
+      opacity: 1;
+    }
+
+    .is-disabled .uni-easyinput__content-textarea {
+      margin: 0;
+    }
+
+    .uni-date-x,
+    .uni-date__x-input,
+    .select-picker-txt,
+    .basic-input_inner,
+    .uni-input-input,
+    .uni-textarea-textarea {
+      color: #333 !important;
+      font-size: 14px !important;
+    }
+  }
+
 }
 </style>

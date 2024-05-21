@@ -1,6 +1,13 @@
 import { BasicForm, ComponentOptions } from "@/components/Basic/Form/src/types";
 import { getCategoryList } from "@/service/sys/category";
 import { CategoryType } from "@/service/sys/model/categoryModel";
+import useAxiosRef from "@/utils/hooks/web/useAxiosRef";
+
+
+export const [categoryList] = useAxiosRef({
+    api: getCategoryList.bind(null, CategoryType.入库单),
+    immediate: true,
+})
 
 export const formSchema: BasicForm.FormSchema[] = [
     {
@@ -9,26 +16,27 @@ export const formSchema: BasicForm.FormSchema[] = [
         component: ComponentOptions.DateTime
     },
     {
-        label: '仓库',
-        field: 'cangku',
-        component: ComponentOptions.ApiSelect,
-    },
-    {
         label: '类型',
         field: 'categoryId',
         component: ComponentOptions.ApiSelect,
         componentProps: {
-            api: getCategoryList.bind(null, CategoryType.入库单)
+            list: categoryList,
+            labelField: 'name',
+            valueField: 'id'
         }
     },
     {
         label: '经办人',
-        field: 'updateUid',
-        component: ComponentOptions.ApiSelect
+        field: 'createUserName',
+        component: ComponentOptions.Input,
     },
     {
         label: '备注',
-        field: 'beizhu',
-        component: ComponentOptions.Textarea
+        field: 'remark',
+        component: ComponentOptions.Textarea,
+        componentProps: {
+            placeholder: '暂无备注',
+            autoHeight: true
+        }
     },
 ]
