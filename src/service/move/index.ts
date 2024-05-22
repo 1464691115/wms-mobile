@@ -1,7 +1,7 @@
 import { defHttp } from '@/api'
 import { queryParamsStr } from '@/utils'
 import { MoveApi } from './ApiEnum'
-import { deepClone } from '@/utils/lib/s-view'
+import { MoveSelectByStockEntryIdModel } from './model/moveModel'
 
 
 export function moveDeleteApi(data = {} as any) {
@@ -25,11 +25,8 @@ export function moveInsertApi(data = {} as any) {
 }
 
 export function moveSelectByStockEntryIdApi(data = {} as any) {
-    const self_data = deepClone(data)
-    self_data.stockEntryId = self_data.sid
-    delete self_data.sid
-    return defHttp.get<any>({
-        url: MoveApi.SELECT_BY_STOCK_ENTRY_ID + queryParamsStr(self_data),
+    return defHttp.get<MoveSelectByStockEntryIdModel[]>({
+        url: MoveApi.SELECT_BY_STOCK_ENTRY_ID + queryParamsStr(data),
     })
 }
 

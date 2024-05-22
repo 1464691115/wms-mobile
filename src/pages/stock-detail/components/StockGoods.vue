@@ -5,7 +5,6 @@
     :refresher-triggered="pullDownTriggered"
     @refresherrefresh="handlePullDownRef"
     @refresherrestore="() => (pullDownTriggered = 'restore')"
-    @scrolltolower="reload"
   >
     <view class="stock-goods_search flex justify-between">
       <BasicInput placeholder="请输入">
@@ -15,92 +14,65 @@
       </BasicInput>
       <view class="stock-goods_search-btn">查询</view>
     </view>
-    <ListView
-      v-if="uuBuildId"
-      :api="moveSelectByStockEntryIdApi"
-      is-custom-next
-      :params="queryParams"
-      :on-register="register"
+    <view
+      v-if="!moveSelectByStockList?.length"
+      class="full justify-center"
+      style="padding-top: 100rpx"
     >
-      <template #empty>
-        <view class="full justify-center" style="padding-top: 100rpx">
-          <IconColor
-            :icon="ICON_COLOR_UNICODE.COLORQUESHENGYE_ZANWUSHUJU"
-            :size="200"
-          />
-        </view>
-      </template>
-      <template v-slot="{ list }">
-        <view class="stock-goods flex-wrap">
-          <view v-for="item in list" :key="item.id" class="stock-entry-item">
-            <view>订单号：{{ item.orderNumber }}</view>
-            <view>创建人：{{ item.createUserName }}</view>
-            <view>创建日期：{{ item.createTime }}</view>
-          </view>
-        </view>
-      </template>
-    </ListView>
+      <IconColor
+        :icon="ICON_COLOR_UNICODE.COLORQUESHENGYE_ZANWUSHUJU"
+        :size="200"
+      />
+    </view>
+    <view v-else class="stock-goods flex-wrap">
+      <view
+        v-for="item in moveSelectByStockList"
+        :key="item.id"
+        class="stock-goods-item"
+      >
+        <view class="stock-goods-item_title">{{ item.materialName }}</view>
+        <view>编码：{{ item.materialCode }}</view>
+        <view>型号：{{ item.materialCategoryName }}</view>
+      </view>
+    </view>
   </scroll-view>
 </template>
 
 <script lang="ts" setup>
-import { usePagination } from '@/layout/ListView'
-import ListView from '@/layout/ListView/ListView.vue'
-import { nextTick, onMounted, ref, watch } from 'vue'
-import { buildUUID } from '@/utils/uuid'
+import { ref } from 'vue'
 import BasicInput from '@/components/Basic/Input/src/BasicInput.vue'
 import IconColor from '@/components/Basic/IconColor/src/IconColor.vue'
 import Icon from '@/components/Basic/Icon/src/Icon.vue'
 import { moveSelectByStockEntryIdApi } from '@/service/move'
+import useAxiosRef from '@/utils/hooks/web/useAxiosRef'
 
 defineOptions({
   options: {
     styleIsolation: 'shared',
   },
 })
+let _freshing = false
 
 const props = defineProps({
-  searchQuery: String,
-  params: Object,
+  sid: String,
 })
 
-onMounted(() => {
-  queryParams.value = Object.assign(queryParams.value, props.params || {})
+const [moveSelectByStockList, reload] = useAxiosRef({
+  api: moveSelectByStockEntryIdApi.bind(null, {
+    stockEntryId: props.sid,
+  }),
 })
-
-const [register, { reloadPagination, resetPagination }] = usePagination()
 
 const pullDownTriggered = ref(false as string | boolean)
-const uuBuildId = ref('uuid')
-const queryParams = ref({
-  title: '',
-  sid: 0,
-})
-
-watch(
-  () => [props.searchQuery, queryParams.value.sid],
-  () => {
-    queryParams.value.title = props.searchQuery || ''
-
-    resetPagination()
-    reloadPagination()
-  },
-)
-
-function reload() {
-  reloadPagination()
-}
 
 async function handlePullDownRef() {
-  if (!uuBuildId.value) return
-  uuBuildId.value = ''
-
-  await nextTick()
-  uuBuildId.value = buildUUID()
-
+  if (_freshing) return
+  _freshing = true
   pullDownTriggered.value = true
-  await nextTick()
+
+  await reload()
   pullDownTriggered.value = false
+  _freshing = false
 }
 </script>
 
