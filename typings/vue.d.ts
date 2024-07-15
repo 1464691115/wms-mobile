@@ -6,7 +6,8 @@ import { Ref } from 'vue'
 
 export { }
 
-declare module 'vue' {
+// declare module 'vue' {
+declare module '@vue/runtime-core' {
   type globalUtilsType = typeof globalUtils
   type globalIconType = typeof globalIcon
   type globalIconColorType = typeof globalIconColor

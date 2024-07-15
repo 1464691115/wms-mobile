@@ -9,19 +9,16 @@
 <script lang="ts" setup>
 import { ComponentOptions, useForm } from '@/components/Basic/Form'
 import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
-import useAxiosRef from '@/hooks/web/useAxiosRef'
 import { addMaterialList } from '@/service/material'
 import { getCategoryList } from '@/service/sys/category'
 import { CategoryType } from '@/service/sys/model/categoryModel'
 import { onShow } from '@dcloudio/uni-app'
 
-const [categoryList] = useAxiosRef({
-  api: getCategoryList.bind(null, CategoryType.物料分类),
+const getCategoryListApi = (p) => ({
+  api: () => getCategoryList(p),
+  labelField: 'name',
+  valueField: 'id',
 })
-const [unitList] = useAxiosRef({
-  api: getCategoryList.bind(null, CategoryType.单位类别),
-})
-
 const [register] = useForm({
   layout: 'horizontal',
   baseColProps: {
@@ -47,22 +44,14 @@ const [register] = useForm({
     {
       label: '货品类型',
       field: 'categoryId',
-      component: ComponentOptions.Select,
-      componentProps: {
-        options: categoryList,
-        rangeLabel: 'name',
-        rangeId: 'id',
-      },
+      component: ComponentOptions.ApiSelect,
+      componentProps: getCategoryListApi(CategoryType.物料分类),
     },
     {
       label: '单位',
       field: 'unitId',
-      component: ComponentOptions.Select,
-      componentProps: {
-        options: unitList,
-        rangeLabel: 'name',
-        rangeId: 'id',
-      },
+      component: ComponentOptions.ApiSelect,
+      componentProps: getCategoryListApi(CategoryType.单位类别),
     },
     {
       label: '安全库存',
@@ -74,14 +63,17 @@ const [register] = useForm({
       label: '有效天数',
       field: 'validDay',
       component: ComponentOptions.Input,
+      componentProps: {},
     },
 
     {
       label: '备注',
       field: 'remark',
       component: ComponentOptions.Textarea,
+      componentProps: (_) => ({}),
     },
-  ] as const,
+  ],
+
   async submitApiFunc(data) {
     const res = await addMaterialList({
       ...data,

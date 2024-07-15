@@ -51,14 +51,20 @@
             {{ filterLabel(item.label, item) }}
             {{ filterColon(item.colon || formProps.colon) }}
           </view>
-          <view class="flex-1">
+          <view
+            class="flex-1 input"
+            :class="{
+              bordered:
+                readComponentPropsItem(item)?.bordered ?? formProps.bordered,
+              disabled: readComponentPropsItem(item)?.disabled,
+            }"
+          >
             <!-- 小程序那边 不能用参数，暂时在使用处用 getFieldsValue -->
             <slot v-if="item.slot" :name="item.slot" />
             <BasicInput
               v-else-if="item.component == ComponentOptions.Input"
               v-model="formData[item.field]"
               v-bind="readComponentPropsItem(item)"
-              input-border
               :placeholder="readComponentPlaceholder(item)"
               :custom-props="readComponentPropsItem(item)"
             />
@@ -68,7 +74,6 @@
               v-model="formData[item.field]"
               v-bind="readComponentPropsItem(item)"
               type="number"
-              input-border
               :placeholder="readComponentPlaceholder(item)"
               :custom-props="readComponentPropsItem(item)"
             />
@@ -659,6 +664,23 @@ defineExpose({
       .label {
         @include font(28rpx, 40px, #333, 400);
         white-space: nowrap;
+      }
+
+      .input {
+        padding: 0 20rpx;
+        min-height: 100%;
+
+        &.bordered {
+          border: 1px solid #dcdfe6;
+          border-radius: 8rpx;
+        }
+        &.disabled {
+          background: #f5f7fa;
+        }
+      }
+
+      ::v-deep .basic-input_inner {
+        padding: 0;
       }
     }
 

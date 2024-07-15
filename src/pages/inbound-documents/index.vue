@@ -38,23 +38,23 @@ const [register] = useForm({
     {
       label: '仓库',
       field: 'warehouse',
-      component: ComponentOptions.Select,
+      component: ComponentOptions.ApiSelect,
       required: true,
     },
     {
       label: '货品类型',
       field: 'type',
-      component: ComponentOptions.Select,
+      component: ComponentOptions.ApiSelect,
     },
     {
       label: '部门',
       field: 'department',
-      component: ComponentOptions.Select,
+      component: ComponentOptions.ApiSelect,
     },
     {
       label: '往来单位',
       field: 'correspondents',
-      component: ComponentOptions.Select,
+      component: ComponentOptions.ApiSelect,
     },
     {
       label: '交货人',

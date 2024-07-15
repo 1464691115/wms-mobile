@@ -1,5 +1,5 @@
 <template>
-  <view class="selector-picker-com full">
+  <view class="selector-picker-com selector-picker full">
     <picker
       class="con"
       mode="selector"
@@ -156,12 +156,17 @@ function getListData() {
   position: relative;
   flex: 1;
 
-  .selector-picker-place {
-    color: #c0bdc1;
-  }
-
   .pad {
     padding: 0 20rpx;
+  }
+}
+
+.selector-picker {
+  &-place {
+    color: #c0bdc1;
+  }
+  &-txt {
+    @include font(32rpx, 32rpx, #333, 400);
   }
 }
 

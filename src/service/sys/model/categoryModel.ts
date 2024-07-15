@@ -13,18 +13,22 @@ export enum CategoryType {
 }
 
 
-export interface CategoryItemInterface {
-	createUid: number;
+export class CategoryItemInterface {
+	createUid?: number;
 	updateUid?: any;
-	createTime: string;
+	createTime?: string;
 	updateTime?: any;
-	createUserName: string;
+	createUserName?: string;
 	updateUserName?: any;
-	id: number;
-	type: number;
-	name: string;
-	remark: string;
-	typeName: string;
+	id?: number;
+	type?: number;
+	name?: string;
+	remark?: string;
+	typeName?: string;
+
+	constructor(arg: CategoryItemInterface) {
+		Object.assign(this, arg)
+	}
 }
 
 

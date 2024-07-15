@@ -4,6 +4,7 @@ import { BasicForm } from "./types"
 export const baseFormProps = {
     /** 是否显示 分号， 如果为 字符串则替换 */
     colon: { type: [Boolean, String] as PropType<boolean | string>, default: true },
+    bordered: { type: [Boolean] as PropType<boolean>, default: true },
 
 
     /** 配置所有选子项的 ColProps，不需要逐个配置，子项也可单独配置优先与全局 */
