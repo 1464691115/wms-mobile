@@ -12,6 +12,7 @@ import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
 import { getCategoryList } from '@/service/sys/category'
 import { getCompanyList } from '@/service/sys/company'
 import { CategoryType } from '@/service/sys/model/categoryModel'
+import { CompanyCategoryType } from '@/service/sys/model/companyModel'
 
 const [register] = useForm({
   layout: 'horizontal',
@@ -23,7 +24,7 @@ const [register] = useForm({
   showResetButton: false,
   schemas: [
     {
-      label: '入库单',
+      label: '出库单',
       field: 'number',
       component: ComponentOptions.Input,
       dynamicDisabled: true,
@@ -40,11 +41,11 @@ const [register] = useForm({
       },
     },
     {
-      label: '入库分类',
+      label: '货品类型',
       field: 'categoryId',
       component: ComponentOptions.ApiSelect,
       componentProps: {
-        api: getCategoryList.bind(this, CategoryType.入库单),
+        api: getCategoryList.bind(this, CategoryType.出库单),
         labelField: 'name',
         valueField: 'id',
       },
@@ -54,7 +55,7 @@ const [register] = useForm({
       field: 'companyId',
       component: ComponentOptions.ApiSelect,
       componentProps: {
-        api: getCompanyList,
+        api: getCompanyList.bind(this, CompanyCategoryType.客户),
         resultField: 'data.list',
         labelField: 'name',
         valueField: 'id',

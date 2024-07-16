@@ -4,6 +4,7 @@ export enum ROUTES_URL {
   HOME = '/pages/home/index',
   NEW_PRODUCTS = '/pages/new-products/index',
   INBOUND_DOCUMENTS = '/pages/inbound-documents/index',
+  OUTBOUND_SHIPMENTS = '/pages/outbound-shipments/index',
   LOGIN = '/pages/login/index',
   STOCK_LIST = '/pages/stock-list/index',
   STOCK_DETAIL = '/pages/stock-detail/index',
@@ -53,6 +54,12 @@ const routes: routesType = [
     path: ROUTES_URL.INBOUND_DOCUMENTS,
     style: navigationBlock({
       navigationBarTitleText: '入库单据',
+    }),
+  },
+  {
+    path: ROUTES_URL.OUTBOUND_SHIPMENTS,
+    style: navigationBlock({
+      navigationBarTitleText: '出库单据',
     }),
   },
   {
