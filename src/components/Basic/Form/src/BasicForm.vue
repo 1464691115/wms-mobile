@@ -645,7 +645,7 @@ defineExpose({
 
     display: grid;
 
-    font-size: 32rpx;
+    font-size: 28rpx;
 
     .basic-form-content_title {
       @include font(40rpx, 50rpx, #525252, 600);
@@ -669,6 +669,8 @@ defineExpose({
       .input {
         padding: 0 20rpx;
         min-height: 100%;
+        display: flex;
+        align-items: center;
 
         &.bordered {
           border: 1px solid #dcdfe6;
@@ -676,6 +678,18 @@ defineExpose({
         }
         &.disabled {
           background: #f5f7fa;
+        }
+
+        uni-textarea {
+          padding-top: 16rpx;
+          width: 100%;
+        }
+
+        ::v-deep .uni-date {
+          transform: translateX(-10rpx);
+          .uni-date-editor--x {
+            border-width: 0;
+          }
         }
       }
 

@@ -47,6 +47,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import { ApiSelectItemType, apiSelectProps } from '../props'
 import { isArray } from '@/utils/is'
 import Icon from '@/components/Basic/Icon/src/Icon.vue'
+import { get } from 'lodash-es'
 
 defineOptions({
   options: { styleIsolation: 'shared' },
@@ -130,7 +131,7 @@ function getListData() {
   if (typeof api != 'function') return
 
   api(params || {}).then((res) => {
-    listData.value = resultField ? res[resultField] : (res as typeof res)
+    listData.value = resultField ? get(res, resultField) : (res as typeof res)
   })
 }
 </script>

@@ -63,6 +63,11 @@ const menuList = ref([
     id: 5,
     pic: '/static/images/home/home_menu_1.png',
     title: '出库',
+    click() {
+      to({
+        url: ROUTES_URL.OUTBOUND_SHIPMENTS,
+      })
+    },
   },
   {
     id: 6,
