@@ -12,6 +12,8 @@ import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
 import { addMaterialList } from '@/service/material'
 import { getCategoryList } from '@/service/sys/category'
 import { CategoryType } from '@/service/sys/model/categoryModel'
+import { showToast } from '@/utils/lib/s-view'
+import { buildUUID } from '@/utils/uuid'
 import { onShow } from '@dcloudio/uni-app'
 
 const getCategoryListApi = (p) => ({
@@ -33,7 +35,7 @@ const [register] = useForm({
       field: 'code',
       component: ComponentOptions.Input,
       dynamicDisabled: true,
-      defaultValue: Date.now() + Math.round(Math.random() * 899 + 100),
+      defaultValue: buildUUID(),
     },
     {
       label: '货品名称',
@@ -60,10 +62,11 @@ const [register] = useForm({
       componentProps: {},
     },
     {
-      label: '有效天数',
+      label: '有效期（0为永久有效）',
       field: 'validDay',
       component: ComponentOptions.Input,
       componentProps: {},
+      defaultValue: 0,
     },
 
     {
@@ -78,6 +81,9 @@ const [register] = useForm({
     const res = await addMaterialList({
       ...data,
       type: 2,
+    })
+    showToast('添加成功').finally(() => {
+      uni.navigateBack()
     })
   },
 })

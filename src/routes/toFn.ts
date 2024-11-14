@@ -8,5 +8,6 @@ export function toBack() {
 export function toHome() {
   to({
     url: ROUTES_URL.HOME,
+    toType: 'reLaunch'
   })
 }
