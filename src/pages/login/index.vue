@@ -17,7 +17,7 @@
       <text class="cuIcon-unlock form-input"></text>
     </template>
     <template #bottom>
-      <!-- <view>福建海智信息技术有限公司</view>
+      <!-- <view>有限公司</view>
       <view class="text-center">0591-88515005</view> -->
     </template>
   </hic-login>
@@ -26,22 +26,28 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import hicLogin from '@/uni_modules/hic-login/components/hic-login/hic-login.vue'
-import { useUserStore } from '@/store/modules/user';
-import { toHome } from '@/routes/toFn';
-
+import { useUserStore } from '@/store/modules/user'
+import { toHome } from '@/routes/toFn'
+import to from '@/routes/to'
+import { showToast } from '@/utils/lib/s-view'
 
 export default defineComponent({
   components: { hicLogin },
-  setup() {
-    const {login} = useUserStore()
+  setup(props: any) {
+    console.log(props)
 
+    const { login } = useUserStore()
 
     async function handleLogin(form) {
       // 表单验证
-      console.log(form);
-       // {loginName: '13xxx81', password: '123'}
-      await login({ userName: form.loginName, password: form.password })
-      toHome()
+      console.log(form)
+      try {
+        await login({ userName: form.loginName, password: form.password })
+        if (props.rUrl) to({ url: props.rUrl, toType: 'reLaunch' })
+        else toHome()
+      } catch (error) {
+        showToast(error)
+      }
     }
 
     return {
@@ -55,11 +61,10 @@ export default defineComponent({
           color: 'lines-green',
         },
       ],
-      handleLogin
+      handleLogin,
     }
   },
   methods: {
-   
     remove(item, index) {
       uni.showModal({
         title: '提示',

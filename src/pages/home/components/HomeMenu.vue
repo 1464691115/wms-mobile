@@ -8,7 +8,7 @@
     >
       <view class="home-menu-item_icon flex-col align-center">
         <!-- <image class="shadow full" :src="imgPrefix(item.pic)" /> -->
-        <image class="img full" :src="imgPrefix(item.pic)" />
+        <component :is="item.pic" />
       </view>
 
       <text class="span">{{ item.title }}</text>
@@ -17,16 +17,21 @@
 </template>
 
 <script lang="ts" setup>
+import { ICON_UNICODE } from '@/components/Basic/Icon'
+import Icon from '@/components/Basic/Icon/src/Icon.vue'
 import { ROUTES_URL } from '@/routes'
 import to from '@/routes/to'
-import { onMounted, ref } from 'vue'
+import { h, onMounted, ref } from 'vue'
 
 onMounted(() => {})
 
 const menuList = ref([
   {
     id: 1,
-    pic: '/static/images/home/home_menu_1.png',
+    pic: h(Icon, {
+      icon: ICON_UNICODE.YUNDANHUOPIN,
+      size: 55,
+    }),
     title: '新增货品',
     click() {
       to({
@@ -36,12 +41,12 @@ const menuList = ref([
   },
   {
     id: 2,
-    pic: '/static/images/home/home_menu_2.png',
+    pic: h(Icon, { icon: ICON_UNICODE.SAOYISAO, size: 55 }),
     title: '扫一扫',
   },
   {
     id: 3,
-    pic: '/static/images/home/home_menu_3.png',
+    pic: h(Icon, { icon: ICON_UNICODE.DANJUGUANLI, size: 85 }),
     title: '单据列表',
     click() {
       to({
@@ -51,7 +56,17 @@ const menuList = ref([
   },
   {
     id: 4,
-    pic: '/static/images/home/home_menu_4.png',
+    pic: h(Icon, { icon: ICON_UNICODE.YUEKUCHAXUN, size: 80 }),
+    title: '库存查询',
+    click() {
+      to({
+        url: ROUTES_URL.OUTBOUND_SHIPMENTS,
+      })
+    },
+  },
+  {
+    id: 5,
+    pic: h(Icon, { icon: ICON_UNICODE.RUKUGUANLI, size: 80 }),
     title: '入库',
     click() {
       to({
@@ -60,29 +75,14 @@ const menuList = ref([
     },
   },
   {
-    id: 5,
-    pic: '/static/images/home/home_menu_1.png',
+    id: 6,
+    pic: h(Icon, { icon: ICON_UNICODE.CHUKUGUANLI, size: 80 }),
     title: '出库',
     click() {
       to({
         url: ROUTES_URL.OUTBOUND_SHIPMENTS,
       })
     },
-  },
-  {
-    id: 6,
-    pic: '/static/images/home/home_menu_2.png',
-    title: '盘点',
-  },
-  {
-    id: 7,
-    pic: '/static/images/home/home_menu_3.png',
-    title: '调拨',
-  },
-  {
-    id: 8,
-    pic: '/static/images/home/home_menu_4.png',
-    title: '库存查询',
   },
 ])
 </script>
@@ -99,8 +99,12 @@ $_g: 26rpx;
   margin-top: 40rpx !important;
 
   .home-menu-item_icon {
-    @include whSquare(130rpx);
+    @include whSquare(100rpx);
     @include border(none, 33rpx);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     .img {
       background-color: #000;
@@ -119,7 +123,6 @@ $_g: 26rpx;
 
   .span {
     @include font(28rpx, 28rpx, #1a2952, 600);
-    margin-top: 20rpx;
     white-space: nowrap;
     text-align: center;
   }

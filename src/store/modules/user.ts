@@ -8,12 +8,10 @@ import { TOKEN_KEY, USER_ID_KEY, USER_INFO_KEY } from '@/enums/cacheEnum'
 import { Persistent } from '@/utils/cache/persistent'
 import { defineStore } from 'pinia'
 import { loginApi } from '@/service/sys/user'
-import { uploadImgApi } from '@/service/sys/upload'
-import { isNumber, isUrl } from '@/utils/is'
-import { getAuthCode } from '@/utils/auth'
+import { isNumber } from '@/utils/is'
 import { showModal } from '@/utils'
-import to from '@/routes/to'
 import { ROUTES_URL } from '@/routes'
+import { toHome, toLogin } from '@/routes/toFn'
 
 interface UserState {
   userInfo: Nullable<UserInfo>
@@ -157,5 +155,3 @@ export const useUserStore = defineStore({
   },
 })
 
-function toLogin(...arg) { }
-function toHome(...arg) { }

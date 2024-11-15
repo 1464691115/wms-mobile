@@ -5,6 +5,13 @@ import { queryParamsStr } from '@/utils'
 
 
 
+export function addStockEntryApi(data) {
+    return defHttp.post<ArrayRequestResult<StockEntryListResultModel>>({
+        url: StockApi.STOCK_ENTRY_INSERT,
+        data: (data),
+    })
+}
+
 export function getStockEntryApiList(data) {
     return defHttp.get<ArrayRequestResult<StockEntryListResultModel>>({
         url: StockApi.GET_STOCK_ENTRY_LIST + queryParamsStr(data),

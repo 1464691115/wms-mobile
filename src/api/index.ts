@@ -11,6 +11,7 @@ import { UserApi } from '@/service/sys/ApiEnum'
 import { initStore } from '@/store'
 import { useUserStore } from '@/store/modules/user'
 import { UploadApi } from '@/service/sys/upload'
+import { toLogin } from '@/routes/toFn'
 
 const whiteApiUrl: string[] = [UserApi.LOGIN, UploadApi.UPLOAD_IMG]
 

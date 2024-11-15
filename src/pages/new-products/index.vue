@@ -62,10 +62,12 @@ const [register] = useForm({
       componentProps: {},
     },
     {
-      label: '有效期（0为永久有效）',
+      label: '有效期',
       field: 'validDay',
       component: ComponentOptions.Input,
-      componentProps: {},
+      componentProps: {
+        placeholder: '请输入有效期（0为永久有效）',
+      },
       defaultValue: 0,
     },
 

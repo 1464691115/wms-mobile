@@ -7,12 +7,11 @@
     @refresherrestore="() => (pullDownTriggered = 'restore')"
   >
     <view class="stock-goods_search flex justify-between">
-      <BasicInput placeholder="请输入">
+      <BasicInput v-model="searchVal" placeholder="请输入货品名称或者分类">
         <template #prefix>
           <Icon :icon="ICON_UNICODE.SEARCH" color="#989898" size="33" />
         </template>
       </BasicInput>
-      <view class="stock-goods_search-btn">查询</view>
     </view>
     <view
       v-if="!moveSelectByStockList?.length"
@@ -32,14 +31,14 @@
       >
         <view class="stock-goods-item_title">{{ item.materialName }}</view>
         <view>编码：{{ item.materialCode }}</view>
-        <view>型号：{{ item.materialCategoryName }}</view>
+        <view>分类：{{ item.materialCategoryName }}</view>
       </view>
     </view>
   </scroll-view>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import BasicInput from '@/components/Basic/Input/src/BasicInput.vue'
 import IconColor from '@/components/Basic/IconColor/src/IconColor.vue'
 import Icon from '@/components/Basic/Icon/src/Icon.vue'
@@ -57,13 +56,25 @@ const props = defineProps({
   sid: String,
 })
 
-const [moveSelectByStockList, reload] = useAxiosRef({
+const [moveSelectByStockData, reload] = useAxiosRef({
   api: moveSelectByStockEntryIdApi.bind(null, {
     stockEntryId: props.sid,
   }),
 })
 
 const pullDownTriggered = ref(false as string | boolean)
+const searchVal = ref('')
+
+const moveSelectByStockList = computed(
+  () =>
+    (!searchVal.value
+      ? moveSelectByStockData.value
+      : moveSelectByStockData.value?.filter((el) =>
+          [el.materialName, el.materialCategoryName].some((sl) =>
+            sl.includes(searchVal.value),
+          ),
+        )) || [],
+)
 
 async function handlePullDownRef() {
   if (_freshing) return
@@ -108,7 +119,7 @@ scroll-view {
   }
 }
 
-.stock-entry {
+.stock-goods {
   padding: 0 20rpx;
   overflow-x: hidden;
 
@@ -118,10 +129,18 @@ scroll-view {
 
   &-item {
     margin-top: 20rpx;
-    padding: 10rpx 20rpx;
+    padding: 20rpx;
     width: 100%;
     background-color: #fff;
     border-radius: 10rpx;
+    border: 1rpx solid #2569e6;
+    color: #666;
+  }
+
+  &-item_title {
+    font-weight: bold;
+    font-size: 32rpx;
+    color: #333;
   }
 }
 </style>

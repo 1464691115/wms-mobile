@@ -12,6 +12,7 @@ import BasicForm from '@/components/Basic/Form/src/BasicForm.vue'
 import { getCategoryList } from '@/service/sys/category'
 import { getCompanyList } from '@/service/sys/company'
 import { CategoryType } from '@/service/sys/model/categoryModel'
+import { CompanyCategoryType } from '@/service/sys/model/companyModel'
 
 const [register] = useForm({
   layout: 'horizontal',
@@ -54,7 +55,7 @@ const [register] = useForm({
       field: 'companyId',
       component: ComponentOptions.ApiSelect,
       componentProps: {
-        api: getCompanyList,
+        api: getCompanyList.bind(this, CompanyCategoryType.客户),
         resultField: 'data.list',
         labelField: 'name',
         valueField: 'id',

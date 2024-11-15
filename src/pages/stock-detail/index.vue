@@ -1,6 +1,8 @@
 <template>
   <view class="stock-list stock-list-wrap">
-    <Tabs v-model:current="currentTabs" :list="tabsList" />
+    <view class="stock-list-tabs">
+      <Tabs v-model:current="currentTabs" :list="tabsList" />
+    </view>
 
     <swiper class="swiper-box" :current="currentTabs" @change="animationfinish">
       <swiper-item
@@ -67,6 +69,10 @@ function animationfinish({ detail }) {
   display: flex;
   flex-direction: column;
   background-color: #f3f4f8;
+
+  &-tabs {
+    background: #fff;
+  }
 
   .swiper-box {
     flex: 1;

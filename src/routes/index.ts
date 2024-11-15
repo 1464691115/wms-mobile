@@ -31,17 +31,17 @@ function navigationBlock(opt) {
 }
 
 const routes: routesType = [
+   {
+    path: ROUTES_URL.HOME,
+    style: navigationBlock({
+      navigationBarTitleText: '首页',
+    }),
+  },
   {
     path: ROUTES_URL.LOGIN,
     style: navigationBlock({
       "navigationBarTitleText": "登录",
       "navigationStyle": "custom"
-    }),
-  },
-  {
-    path: ROUTES_URL.HOME,
-    style: navigationBlock({
-      navigationBarTitleText: '首页',
     }),
   },
   {
