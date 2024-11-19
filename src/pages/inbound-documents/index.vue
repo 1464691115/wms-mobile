@@ -51,11 +51,11 @@ const [register] = useForm({
       },
     },
     {
-      label: '客户',
+      label: '供应商',
       field: 'companyId',
       component: ComponentOptions.ApiSelect,
       componentProps: {
-        api: getCompanyList.bind(this, CompanyCategoryType.客户),
+        api: getCompanyList.bind(this, CompanyCategoryType.供应商),
         resultField: 'data.list',
         labelField: 'name',
         valueField: 'id',

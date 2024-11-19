@@ -1,8 +1,8 @@
 //? 去拉文档类型用下面正则替换
 
 //? uni-app的
-//TODO 查找： (.*)(String|Object|Boolean|HexColor|Number|boolean|HandleEvent)(.*)
-//TODO 替换： /** $3 */ \n $1: \U$2
+//TODO 查找： (.*)\s(String|Boolean|HexColor|Number|boolean|HandleEvent|Array|Object)(\\\w+)?[',\[\]:\/\wA-Z\d\s\\-]+([\u4e00-\u9fa5])(.*)
+//TODO 替换： /** $4$5 */ \n $1: \u$2
 
 //? uview的
 //TODO 查找：([A-Za-z]+(-[a-z]+){0,10})\t*([\u4e00-\u9fa5]([\u4e00-\u9fa5]|，|[a-z])*).*(String|Object|Boolean|HexColor|Number|boolean|HandleEvent).*

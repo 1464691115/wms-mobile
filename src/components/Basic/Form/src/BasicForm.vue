@@ -117,11 +117,11 @@
               @change="(e) => readComponentChange(item, e)"
             />
 
-            <uni-file-picker
+            <BasicUpload
               v-else-if="item.component == ComponentOptions.Upload"
               v-bind="readComponentPropsItem(item)"
               v-model="formData[item.field]"
-              @success="(e) => readComponentChange(item, e)"
+              @change="(e) => readComponentChange(item, e)"
             />
           </view>
         </view>
@@ -192,6 +192,7 @@ import { APP_PRESET_COLOR } from '@/settings/designSetting'
 import { dateUtil, DATE_TIME_FORMAT } from '@/utils/dateUtil'
 import debounce from '@/utils/lib/debounce'
 import ApiSelect from '@/components/Basic/ApiSelect/src/ApiSelect.vue'
+import undefined from '../../Upload/src/BasicUpload.vue'
 
 defineOptions({
   options: {
@@ -255,7 +256,7 @@ watch(
 
 /** 重置表单 */
 function btnHandleReset() {
-  if (formProps.resetFunc !== undefined) {
+  if (isFunction(formProps.resetFunc)) {
     formProps.resetFunc()
   } else {
     resetFields()
@@ -301,7 +302,7 @@ const resetFields: BasicForm.FormMethodsType['resetFields'] = () => {
 
 const handleSubmit: BasicForm.FormMethodsType['submit'] = () => {
   return new Promise(async (resolve, reject) => {
-    if (formProps.submitFunc !== undefined) {
+    if (isFunction(formProps.submitFunc)) {
       formProps.submitFunc().finally(() => resolve(true))
     } else {
       try {
@@ -487,7 +488,7 @@ function readComponentPropsItem(item: BasicForm.FormSchema) {
       break
   }
 
-  if (dynamicDisabled !== undefined) componentProps.disabled = dynamicDisabled
+  if (dynamicDisabled) componentProps.disabled = dynamicDisabled
 
   return (
     (isFunction(componentProps)
@@ -636,9 +637,6 @@ defineExpose({
   width: 100%;
   height: auto;
 
-  ::v-deep .uni-file-picker {
-    padding: 5px;
-  }
 
   .basic-form-content {
     min-height: 100rpx;

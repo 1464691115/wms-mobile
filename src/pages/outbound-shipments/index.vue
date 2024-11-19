@@ -64,7 +64,8 @@ const [register] = useForm({
     {
       label: '备注',
       field: 'remark',
-      component: ComponentOptions.Textarea,
+      component: ComponentOptions.Input,
+      componentProps: {},
     },
   ],
   submitApiFunc() {
